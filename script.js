@@ -127,6 +127,8 @@ function addWalkToMap(path) {
 
     var polyline = L.polyline(points, { color: color, weight: 4 }).addTo(map);
 
+    console.log(path.podcast);
+
     // Bind tooltip with the podcast name and show it when hovering
     /*
     polyline.bindTooltip(path.podcast, {
@@ -137,22 +139,35 @@ function addWalkToMap(path) {
     });
     */
 
+    const podcastFromTheList = podcastData[path.podcastIndex];
 
-
-        // Add the logo and name tooltip when the user hovers over the polyline
+    // Add the logo and name tooltip when the user hovers over the polyline
     polyline.on('mouseover', function () {
-        const tooltipContent = `
-            <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
-                <img src="${podcast.logoUrl}" alt="${podcast.name} Logo" style="max-width: 50px; max-height: 50px; margin-bottom: 10px; object-fit: contain;">
-                <div style="font-weight: bold; color: ${podcast.color}; font-size: 14px; text-align: center;">${podcast.name}</div>
-            </div>
-        `;
+        let tooltipContent;
+
+        if (podcastFromTheList !== undefined) {
+            tooltipContent = `
+                <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+                    <img src="${podcastFromTheList.logoUrl}" alt="${podcastFromTheList.name} Logo" style="max-width: 50px; max-height: 50px; margin-bottom: 10px; object-fit: contain;">
+                    <div style="font-weight: bold; color: ${podcastFromTheList.color}; font-size: 14px; text-align: center;">${podcastFromTheList.name}</div>
+                </div>
+            `;
+        }
+        else {
+            tooltipContent = `
+                <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+                    <img src="" alt="Failed To Load" style="max-width: 50px; max-height: 50px; margin-bottom: 10px; object-fit: contain;">
+                    <div style="font-weight: bold; color: 000000; font-size: 14px; text-align: center;">Failed</div>
+                </div>
+            `;
+        }
+
         polyline.bindTooltip(tooltipContent, { permanent: false, sticky: true }).openTooltip();
     });
     
 
     polyline.on('mouseout', function () {
-        console.log("Mouseout from line: ", podcast.name); // Debugging statement
+        //console.log("Mouseout from line: ", podcastFromTheList.name); // Debugging statement
         polyline.closeTooltip();
     });
 
@@ -275,8 +290,18 @@ document.getElementById('save-walk').addEventListener('click', function() {
         return;
     }
 
+    // Se om namnet på podcastName matchar med en podcast från listan
+    let podcastMatchIndex;
+    for (let i = 0; i < podcastData.length; i++) {
+        if (podcastData[i].name === podcastName) {
+            podcastMatchIndex = i;
+            break;
+        }
+    }
+
     // Save the walk data to localStorage
     var savedWalk = {
+        podcastIndex: podcastMatchIndex,
         podcast: podcastName,
         points: validPathHistory.map(function(path) {
             return { lat: path.latLng.lat, lng: path.latLng.lng };
