@@ -6,83 +6,100 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 var markers = [];  // Array to store markers
 var pathHistory = []; // Array to store the path history
 var polylines = []; // Array to store polylines
+let isPlacingMarkers = true;  // Initially, marker placement is enabled
+
 
 const podcastData = [
     {
         name: 'Midnight burger',
         color: '#FF5733',
         logoUrl: 'Images/Midnight_burger.jpeg',  // Replace with the actual logo URL
-        path: [[51.5, -0.09], [51.6, -0.1]]
+        path: []
     },
     {
         name: 'Derelict',
-        color: '#33FF57',
+        color: '#0a00d7',
         logoUrl: 'Images/Derelict.jpeg',  // Replace with the actual logo URL
-        path: [[51.4, -0.12], [51.7, -0.14]]
+        path: []
     },
     {
         name: 'The White Vault',
-        color: '#33FF57',
+        color: '#00f0ff',
         logoUrl: 'Images/White_vault.jpeg',  // Replace with the actual logo URL
-        path: [[51.4, -0.12], [51.7, -0.14]]
+        path: []
     },
     {
         name: 'Paralyzed',
-        color: '#33FF57',
+        color: '#d80000',
         logoUrl: 'Images/Paralyzed.jpeg',  // Replace with the actual logo URL
-        path: [[51.4, -0.12], [51.7, -0.14]]
+        path: []
     },
     {
         name: 'Tower 4',
-        color: '#33FF57',
+        color: '#9700ff',
         logoUrl: 'Images/Tower_4.jpeg',  // Replace with the actual logo URL
-        path: [[51.4, -0.12], [51.7, -0.14]]
+        path: []
     },
     {
         name: 'Station 151',
-        color: '#33FF57',
+        color: '#088fff',
         logoUrl: 'Images/Station_151.jpeg',  // Replace with the actual logo URL
-        path: [[51.4, -0.12], [51.7, -0.14]]
+        path: []
     },
     {
         name: 'Red Valley',
-        color: '#33FF57',
+        color: '#ff0000',
         logoUrl: 'Images/Red_valley.jpeg',  // Replace with the actual logo URL
-        path: [[51.4, -0.12], [51.7, -0.14]]
+        path: []
     },
     {
         name: 'OZ 9',
-        color: '#33FF57',
+        color: '#026057',
         logoUrl: 'Images/Oz_9.jpeg',  // Replace with the actual logo URL
-        path: [[51.4, -0.12], [51.7, -0.14]]
+        path: []
     },
     {
         name: 'End Of All Hope',
         color: '#33FF57',
         logoUrl: 'Images/EOAH.jpeg',  // Replace with the actual logo URL
-        path: [[51.4, -0.12], [51.7, -0.14]]
+        path: []
     },
     {
         name: 'Desert Skies',
-        color: '#33FF57',
+        color: '#6f00b2',
         logoUrl: 'Images/Desert_skies.jpeg',  // Replace with the actual logo URL
-        path: [[51.4, -0.12], [51.7, -0.14]]
+        path: []
     },
     {
         name: 'Crystal Blues',
-        color: '#33FF57',
+        color: '#1400d7',
         logoUrl: 'Images/Crystal_blues.jpeg',  // Replace with the actual logo URL
-        path: [[51.4, -0.12], [51.7, -0.14]]
+        path: []
     },
     {
         name: 'Ars Paradoxica',
-        color: '#33FF57',
+        color: '#0000b2',
         logoUrl: 'Images/Ars_paradoxica.jpeg',  // Replace with the actual logo URL
-        path: [[51.4, -0.12], [51.7, -0.14]]
+        path: []
     },
 
 ];
 
+class Walk {
+    constructor() {
+        this.podcast;
+        this.podcastIndex;
+        this.polyline;
+        this.date;
+    }
+
+    showOnMap() {} // Shows it on the map
+    removeFromMap() {}
+}
+
+const walk = new Walk();
+
+/*
 podcastData.forEach(podcast => {
     console.log("Adding polyline for podcast: ", podcast.name); // Debugging statement
 
@@ -92,12 +109,7 @@ podcastData.forEach(podcast => {
     }).addTo(map);
 
     console.log("Created polyline with path: ", podcast.path); // Debugging statement
-});
-
-
-
-
-
+});*/
 
 
 // Function to generate a color based on podcast name
@@ -111,6 +123,7 @@ function getColorForPodcast(podcastName) {
 }
 
 // Function to add a walk to the map with tooltip and color
+
 function addWalkToMap(path) {
     console.log("Adding walk to map: ", path); // Debugging statement
 
@@ -125,98 +138,118 @@ function addWalkToMap(path) {
     var color = getColorForPodcast(path.podcast);
     console.log("Color for podcast: ", color); // Debugging statement
 
+    const podcastFromTheList = podcastData[path.podcastIndex];
+    if (podcastFromTheList.color !== "") {
+        color = podcastFromTheList.color;
+    } 
+
     var polyline = L.polyline(points, { color: color, weight: 4 }).addTo(map);
+
+    // Mouse hover over the polyline - Disable marker placement
+    polyline.on('mouseover', function () {
+        isPlacingMarkers = false;  // Disable marker placement
+        console.log("Marker placement disabled due to hover on path");
+    });
+
+    // Mouse out from the polyline - Enable marker placement again
+    polyline.on('mouseout', function () {
+        isPlacingMarkers = true;  // Enable marker placement
+        console.log("Marker placement enabled after leaving path");
+    });
 
     console.log(path.podcast);
 
-    // Bind tooltip with the podcast name and show it when hovering
-    /*
-    polyline.bindTooltip(path.podcast, {
-        permanent: false,  // Only shows on hover
-        direction: "top",  // Appears above the line
-        offset: [0, -5]    // Small offset for better visibility
-        
-    });
-    */
-
-    const podcastFromTheList = podcastData[path.podcastIndex];
-
     // Add the logo and name tooltip when the user hovers over the polyline
     polyline.on('mouseover', function () {
-        let tooltipContent;
+        if (polyline !== selectedPolyline) {  // Only highlight if the polyline is not selected
+            let tooltipContent;
 
-        if (podcastFromTheList !== undefined) {
-            tooltipContent = `
-                <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
-                    <img src="${podcastFromTheList.logoUrl}" alt="${podcastFromTheList.name} Logo" style="max-width: 50px; max-height: 50px; margin-bottom: 10px; object-fit: contain;">
-                    <div style="font-weight: bold; color: ${podcastFromTheList.color}; font-size: 14px; text-align: center;">${podcastFromTheList.name}</div>
-                </div>
-            `;
-        }
-        else {
-            tooltipContent = `
-                <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
-                    <img src="" alt="Failed To Load" style="max-width: 50px; max-height: 50px; margin-bottom: 10px; object-fit: contain;">
-                    <div style="font-weight: bold; color: 000000; font-size: 14px; text-align: center;">Failed</div>
-                </div>
-            `;
-        }
-
-        polyline.bindTooltip(tooltipContent, { permanent: false, sticky: true }).openTooltip();
-    });
-    
-
-    polyline.on('mouseout', function () {
-        //console.log("Mouseout from line: ", podcastFromTheList.name); // Debugging statement
-        polyline.closeTooltip();
-    });
-
-    polylines.push(polyline);
-}
-
-
-
-// Load saved walks from localStorage and update history list
-function loadSavedWalks() {
-    console.log("Loading saved walks from localStorage..."); // Debugging statement
-
-    if (localStorage.getItem('walkHistory')) {
-        console.log("Found walk history in localStorage."); // Debugging statement
-
-        pathHistory = JSON.parse(localStorage.getItem('walkHistory'));
-        pathHistory.forEach(function(path) {
-            console.log("Loading path: ", path); // Debugging statement
-
-            if (path.points && path.points.length > 0) {
-                // Filtering the points to ensure only valid lat/lng are included
-                const filteredPoints = path.points.filter(function(point) {
-                    return point && typeof point.lat === 'number' && typeof point.lng === 'number'; // Only keep valid points
-                });
-
-                console.log("Filtered points: ", filteredPoints); // Debugging statement
-
-                if (filteredPoints.length > 0) {
-                    // Create the polyline or any other map-related processing here
-                    addWalkToMap(path); // Assuming this function uses the filtered points internally
-                } else {
-                    console.log("No valid points in path:", path); // Debugging statement
-                }
-
-                addHistoryItem(path); // Assuming you want to still log history even if points are invalid
-            } else {
-                console.log("No points found in path:", path); // Debugging statement
+            if (podcastFromTheList !== undefined) {
+                tooltipContent = `
+                    <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+                        <img src="${podcastFromTheList.logoUrl}" alt="${podcastFromTheList.name} Logo" style="max-width: 50px; max-height: 50px; margin-bottom: 10px; object-fit: contain;">
+                        <div style="font-weight: bold; color: ${color}; font-size: 14px; text-align: center;">${podcastFromTheList.name}</div>
+                    </div>
+                `;
             }
-        });
-    } else {
-        console.log("No walk history found in localStorage."); // Debugging statement
-    }
+            else {
+                tooltipContent = `
+                    <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+                        <img src="" alt="Failed To Load" style="max-width: 50px; max-height: 50px; margin-bottom: 10px; object-fit: contain;">
+                        <div style="font-weight: bold; color: 000000; font-size: 14px; text-align: center;">Failed</div>
+                    </div>
+                `;
+            }
+
+            polyline.bindTooltip(tooltipContent, { permanent: false, sticky: true }).openTooltip();
+
+            // Highlight the polyline (Change color to red on hover)
+            polyline.setStyle({
+                color: 'red',  // Change color to red on hover
+                weight: 6,     // Thicker line
+            });
+        }
+    });
+
+    // Reset the style when the mouse leaves the polyline
+    polyline.on('mouseout', function () {
+        polyline.closeTooltip(); // Close the tooltip
+
+        if (polyline !== selectedPolyline) {
+            polyline.setStyle({
+                color: color,  // Reset to original color
+                weight: 4,     // Reset to original weight
+            });
+        }
+    });
+
+    // Click to select the polyline
+    polyline.on('click', function () {
+        // Prevent the marker from being added (not using L.marker here)
+        // If this polyline is already selected, we unselect it
+        if (selectedPolyline === polyline) {
+            selectedPolyline.setStyle({
+                color: color,  // Reset to original color
+                weight: 4,     // Reset to original weight
+            });
+            selectedPolyline = null; // Unselect it
+        } else {
+            // Deselect the previously selected polyline
+            if (selectedPolyline) {
+                selectedPolyline.setStyle({
+                    color: color,  // Set previous selection to blue
+                    weight: 4,      // Default weight
+                });
+            }
+
+            // Select this polyline
+            selectedPolyline = polyline;
+            polyline.setStyle({
+                color: 'green',  // Set selected polyline to green
+                weight: 6,       // Thicker line for selected
+            });
+
+            console.log("Selected polyline:", polyline);
+        }
+    });
+
+    polylines.push(polyline); // Add polyline to the list
 }
 
 
+function removeSavedWalk(walk) {
+    map.removeLayer();
 
+    // 1. Remove from the history list visually (before updating localStorage)
+    historyList.removeChild(newHistoryItem);
 
-// Initial load of saved walks
-loadSavedWalks();
+    // 2. Now, remove the walk from the localStorage
+    removeWalkFromLocalStorage(walk);
+
+    // 3. After removing, re-render the history list
+    renderHistoryList();
+}
+
 
 // Function to add walk to history list
 function addHistoryItem(path) {
@@ -227,16 +260,11 @@ function addHistoryItem(path) {
     var distance = 0;
     if (path.points && path.points.length > 1) {
         for (let i = 0; i < path.points.length - 1; i++) {
-            var pointA = path.points[i];
-            var pointB = path.points[i + 1];
+            var pointA = L.latLng(path.points[i].lat, path.points[i].lng);
+            var pointB = L.latLng(path.points[i + 1].lat, path.points[i + 1].lng);
 
-            // Ensure the points are valid before calculating the distance
-            if (pointA && pointB && pointA.latLng && pointB.latLng) {
-                distance += pointA.latLng.distanceTo(pointB.latLng);
-            }
-            else {
-                console.log("didn't find valid points");
-            }
+            // Calculate the distance between pointA and pointB
+            distance += pointA.distanceTo(pointB);  // This gives the distance in meters
         }
     }
 
@@ -246,25 +274,152 @@ function addHistoryItem(path) {
 
     // Show podcast name, distance, and date
     newHistoryItem.textContent = `${path.podcast} | Distance: ${(distance / 1000).toFixed(2)} km | Date: ${formattedDate}`;
+
+    // Create the delete button
+    var deleteButton = document.createElement('button');
+    deleteButton.textContent = '🗑️';
+    deleteButton.classList.add('deleteBtn');
+    
+    // Add delete functionality
+    deleteButton.onclick = function() {
+    };
+
+    // Append the delete button to the history item
+    newHistoryItem.appendChild(deleteButton);
+
+    // Add the new history item to the list
     historyList.appendChild(newHistoryItem);
 
     console.log(distance);
     return distance;
 }
 
-// Add a marker on click to log the walk's path
-map.on('click', function(e) {
-    var latLng = e.latlng;
-    var marker = L.marker(latLng).addTo(map);
-    
-    // Push marker and latLng into pathHistory
-    if (latLng && latLng.lat && latLng.lng) {
-        markers.push(marker);
-        pathHistory.push({ latLng: latLng, podcast: null }); // Keep track of the walk's path (without podcast name initially)
+// Function to remove a walk from localStorage
+function removeWalkFromLocalStorage(path) {
+    // Retrieve the walk history from localStorage
+    var storedHistory = JSON.parse(localStorage.getItem('walkHistory')) || [];
+
+    // Filter out the walk we want to remove based on its unique properties (e.g., podcast name and date)
+    var updatedHistory = storedHistory.filter(function(storedPath) {
+        return storedPath.podcast !== path.podcast || storedPath.date !== path.date;
+    });
+
+    // Save the updated history back to localStorage
+    localStorage.setItem('walkHistory', JSON.stringify(updatedHistory));
+
+    console.log("Walk removed from localStorage:", path);
+}
+
+// Function to load and render all saved walks
+function renderHistoryList() {
+    var historyList = document.getElementById('history-list');
+    historyList.innerHTML = ''; // Clear the list before re-rendering
+
+    // Retrieve the walk history from localStorage
+    var storedHistory = JSON.parse(localStorage.getItem('walkHistory')) || [];
+
+    // For each stored walk, add it to the list
+    storedHistory.forEach(function(path) {
+        addHistoryItem(path);  // Add walk item to the list
+    });
+}
+
+// Function to load saved walks from localStorage on page load
+function loadSavedWalks() {
+    console.log("Loading saved walks from localStorage...");
+
+    if (localStorage.getItem('walkHistory')) {
+        console.log("Found walk history in localStorage.");
+
+        pathHistory = JSON.parse(localStorage.getItem('walkHistory'));
+        pathHistory.forEach(function(path) {
+            console.log("Loading path: ", path);
+
+            if (path.points && path.points.length > 0) {
+                // Filtering the points to ensure only valid lat/lng are included
+                const filteredPoints = path.points.filter(function(point) {
+                    return point && typeof point.lat === 'number' && typeof point.lng === 'number';
+                });
+
+                console.log("Filtered points: ", filteredPoints);
+
+                if (filteredPoints.length > 0) {
+                    // Create the polyline or any other map-related processing here
+                    addWalkToMap(path);
+                } else {
+                    console.log("No valid points in path:", path);
+                }
+
+                addHistoryItem(path); // Add the history item to the list
+            } else {
+                console.log("No points found in path:", path);
+            }
+        });
     } else {
-        console.warn('Invalid latLng encountered:', latLng); // Debugging invalid latLng
+        console.log("No walk history found in localStorage.");
+    }
+}
+
+// Initial load of saved walks
+loadSavedWalks();
+
+
+
+
+
+
+let isHoveringPolyline = false; // Tracks hover state over polylines
+let isPolylineSelected = false; // Tracks polyline selection state
+let selectedPolyline = null; // To keep track of the selected polyline
+
+// Handle hovering over polylines
+map.on('mouseover', '.leaflet-interactive', function(event) {
+    if (event.target instanceof L.Polyline || event.target instanceof L.Polygon) {
+        isHoveringPolyline = true; // The mouse is over a polyline or polygon
     }
 });
+
+// Handle mouseout over polylines
+map.on('mouseout', '.leaflet-interactive', function(event) {
+    if (event.target instanceof L.Polyline || event.target instanceof L.Polygon) {
+        isHoveringPolyline = false; // The mouse is no longer over a polyline or polygon
+    }
+});
+
+// Function to select a polyline
+function selectPolyline(polyline) {
+    isPolylineSelected = true; // Set flag that polyline is selected
+    selectedPolyline = polyline;
+    selectedPolyline.setStyle({ color: 'red' }); // Example: Change color to indicate selection
+}
+
+// Function to deselect polyline
+function deselectPolyline() {
+    if (selectedPolyline) {
+        selectedPolyline.setStyle({ color: 'blue' }); // Reset color or whatever style change you want
+        selectedPolyline = null;
+    }
+    isPolylineSelected = false; // Reset the selection flag
+}
+
+// Add marker only if not hovering or selecting a polyline
+map.on('click', function(event) {
+    // Check if marker placement is enabled and we are not hovering over or selecting a polyline
+    if (isPlacingMarkers && !isHoveringPolyline && !isPolylineSelected) {
+        var latLng = event.latlng;
+        var marker = L.marker(latLng).addTo(map);
+
+        // Optionally store the marker info
+        markers.push(marker);
+        // Track walk path if needed (this is just an example)
+        pathHistory.push({ latLng: latLng, podcast: null });
+
+        console.log("Marker placed at:", latLng);
+    }
+});
+
+
+
 
 // Function to save the walk with podcast name and date
 document.getElementById('save-walk').addEventListener('click', function() {
@@ -355,4 +510,43 @@ document.getElementById('clear-paths').addEventListener('click', function() {
     document.getElementById('history-list').innerHTML = '';
 
     console.log("Paths, markers, and history cleared.");
+});
+
+function undoLastMarker() {
+    if (markers.length > 0) {
+        let lastMarker = markers.pop(); // Remove last marker from array
+        map.removeLayer(lastMarker); // Remove marker from map
+
+        if (pathHistory.length > 0) {
+            pathHistory.pop(); // Remove the last recorded position
+        }
+
+        // Remove the old polyline
+        if (currentPolyline) {
+            map.removeLayer(currentPolyline);
+        }
+
+        // Re-draw the updated polyline from pathHistory
+        if (pathHistory.length > 1) {
+            currentPolyline = L.polyline(pathHistory.map(p => p.latLng), { color: 'blue' }).addTo(map);
+        }
+
+        console.log("Marker and path history updated");
+    } else {
+        console.log("No markers left to remove");
+    }
+}
+
+
+
+
+// Undo button functionality
+document.getElementById('undo-btn').addEventListener('click', undoLastMarker);
+
+// Keyboard shortcuts for Undo (Ctrl+Z on Windows/Linux, Cmd+Z on Mac)
+document.addEventListener('keydown', function(event) {
+    if ((event.ctrlKey || event.metaKey) && event.key === 'z') { 
+        event.preventDefault(); // Prevents unintended browser shortcuts (e.g., undoing text input)
+        undoLastMarker();
+    }
 });

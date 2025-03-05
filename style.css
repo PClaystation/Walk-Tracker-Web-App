@@ -101,3 +101,12 @@ h1, h3 {
     object-fit: cover;
     margin-bottom: 5px;
 }
+
+.deleteBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: red;
+    font-size: 18px;
+    margin-left: 10px; /* Space between text and the trash can */
+}
