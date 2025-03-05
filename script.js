@@ -1,5 +1,5 @@
 // Initialize the map and setup
-var map = L.map('map').setView([59.3293, 18.0686], 13); // Coordinates of Stockholm, Sweden for example
+/*var map = L.map('map').setView([59.3293, 18.0686], 13); // Coordinates of Stockholm, Sweden for example
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
@@ -7,7 +7,7 @@ var markers = [];  // Array to store markers
 var pathHistory = []; // Array to store the path history
 var polylines = []; // Array to store polylines
 let isPlacingMarkers = true;  // Initially, marker placement is enabled
-
+*/
 
 const podcastData = [
     {
@@ -86,18 +86,75 @@ const podcastData = [
 ];
 
 class Walk {
-    constructor() {
-        this.podcast;
-        this.podcastIndex;
-        this.polyline;
-        this.date;
+    constructor(podcastName, points, date) {
+        this.podcastName = podcastName;
+        this.podcastIndex = this.findMatchingPodcastIndex(podcastData);
+        this.points = points;
+        this.date = date;
     }
 
-    showOnMap() {} // Shows it on the map
-    removeFromMap() {}
+    findMatchingPodcastIndex(podcastList) {
+        let podcastMatchIndex;
+        for (let i = 0; i < podcastList.length; i++) {
+            if (podcastList[i].name === this.podcastName) {
+                podcastMatchIndex = i;
+                break;
+            }
+        }
+
+        return podcastMatchIndex;
+    }
 }
 
-const walk = new Walk();
+class Map {
+    constructor() {
+        this.map = L.map('map').setView([59.3293, 18.0686], 13); // Coordinates of Stockholm, Sweden for example
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
+
+        this.walks = [];
+        this.markers = [];
+
+        this.allowMarkerPlacement = true;
+        this.isHoveringPolyline = false;
+        this.isPolylineSelected = false;
+    }
+
+    showExistingWalks() {
+        this.walks.forEach(walk => {
+            const polyline = L.polyline(walk.points, { color: walk.color, weight: 4 }).addTo(this.map);
+
+            var points = path.points.map(point => L.latLng(point.lat, point.lng));
+        });
+    }
+
+    createNewWalk(points) {
+        const walk = new Walk(document.getElementById('podcast-input').value, points, new Date().toISOString());
+
+        this.walks.push(walk);
+    }
+
+    saveWalkToLocalStorage(walk) {
+        let send = JSON.parse(localStorage.getItem('walks')) || [];
+        send.push(walk);
+        localStorage.setItem('walks', JSON.stringify(send));
+    }
+
+    placeMarker(event) {
+        if (this.allowMarkerPlacement && !this.isHoveringPolyline && !this.isPolylineSelected) {
+            const latLng = event.latlng;
+            const marker = L.marker(latLng).addTo(this.map);
+            
+            /*
+            // Optionally store the marker info
+            markers.push(marker);
+            // Track walk path if needed (this is just an example)
+            pathHistory.push({ latLng: latLng, podcast: null });
+            */
+        }
+    }
+}
+
+const testMap = new Map();
 
 /*
 podcastData.forEach(podcast => {
@@ -110,7 +167,6 @@ podcastData.forEach(podcast => {
 
     console.log("Created polyline with path: ", podcast.path); // Debugging statement
 });*/
-
 
 // Function to generate a color based on podcast name
 function getColorForPodcast(podcastName) {
