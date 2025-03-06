@@ -619,6 +619,16 @@ const toggleTracking = () => {
 document.getElementById('save-walk').addEventListener('click', function() {
     var podcastName = document.getElementById('podcast-input').value;
     
+    if (podcastName.trim() === '') {
+        alert('Please enter a podcast name!');
+        return;
+    }
+    
+    if (gpsPath.length === 0) {
+        alert('Please walk and create a path before saving!');
+        return;
+    }
+
     // Ensure path only contains valid points
     var validPathHistory = gpsPath.filter(function(path) {
         return path.latLng && typeof path.latLng.lat === 'number' && typeof path.latLng.lng === 'number';
