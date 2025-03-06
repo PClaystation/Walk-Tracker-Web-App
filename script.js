@@ -423,27 +423,35 @@ map.on('click', function(event) {
 
 // Function to save the walk with podcast name and date
 document.getElementById('save-walk').addEventListener('click', function() {
-    // Get and trim the podcast name
     var podcastName = document.getElementById('podcast-input').value.trim();
     
+    // Check if the podcast name is empty
     if (podcastName === '') {
         alert('Please enter a podcast name!');
-        return; // Stop if no name provided
+        return; // Stop if no podcast name
     }
     
-    if (gpsPath.length === 0) {
-        alert('Please walk and create a path before saving!');
-        return; // Stop if no GPS data exists
+    // Check if there is any valid path (either gpsPath or pathHistory)
+    var validPathHistory = [];
+
+    // Check for GPS path
+    if (gpsPath.length > 0) {
+        validPathHistory = gpsPath.filter(function(path) {
+            return path.latLng && typeof path.latLng.lat === 'number' && typeof path.latLng.lng === 'number';
+        });
     }
-
-    // Ensure gpsPath only contains valid points
-    var validPathHistory = gpsPath.filter(function(path) {
-        return path.latLng && typeof path.latLng.lat === 'number' && typeof path.latLng.lng === 'number';
-    });
-
+    
+    // If no GPS path, check manual path (pathHistory)
+    if (validPathHistory.length === 0 && pathHistory.length > 0) {
+        validPathHistory = pathHistory.filter(function(path) {
+            return path.latLng && typeof path.latLng.lat === 'number' && typeof path.latLng.lng === 'number';
+        });
+    }
+    
+    // If no valid points in either path, show an alert
     if (validPathHistory.length === 0) {
-        alert('No valid points to save!');
-        return; // Stop if no valid points exist
+        alert('Please walk and create a path before saving!');
+        return;
     }
 
     // Match podcast name with podcastData in a case-insensitive manner
@@ -467,11 +475,16 @@ document.getElementById('save-walk').addEventListener('click', function() {
     storedHistory.push(savedWalk);
     localStorage.setItem('walkHistory', JSON.stringify(storedHistory));
 
-    // Reset GPS path and remove markers
+    // Reset GPS path and remove markers for next walk
     gpsPath = [];
     markers.forEach(marker => map.removeLayer(marker));
     markers = [];
-    document.getElementById('podcast-input').value = ''; // Clear the input field
+    
+    // Reset manual path (if you have one) if needed
+    pathHistory = []; 
+
+    // Clear input field
+    document.getElementById('podcast-input').value = ''; 
 
     // Update UI with new walk (assuming these functions are defined)
     addHistoryItem(savedWalk);
@@ -479,6 +492,7 @@ document.getElementById('save-walk').addEventListener('click', function() {
 
     console.log("Walk saved and cleared.");
 });
+
 
 
 
