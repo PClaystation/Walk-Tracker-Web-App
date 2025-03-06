@@ -2,7 +2,7 @@
     "name": "Walk Tracker",
     "short_name": "WalkTrack",
     "description": "Track your walks and podcasts",
-    "start_url": "/index.html",
+    "start_url": "/",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#4CAF50",
