@@ -6,7 +6,7 @@
     <title>Walk Tracker</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="./manifest.json">
 </head>
 <body>
     <div id="map"></div>
@@ -35,7 +35,7 @@
     <script>
         if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/service-worker.js')
+            navigator.serviceWorker.register('./service-worker.js')
             .then((registration) => {
                 console.log('Service Worker registered with scope:', registration.scope);
             })
@@ -43,6 +43,15 @@
                 console.error('Service Worker registration failed:', error);
             });
         });
+        }
+        
+
+      </script>
+      <script>
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            if (!location.pathname.startsWith('/Walk-Tracker-Web-App/')) {
+                location.href = '/Walk-Tracker-Web-App/';
+            }
         }
 
       </script>
