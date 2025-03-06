@@ -616,9 +616,7 @@ const toggleTracking = () => {
 };
 
 // Update save-walk button to support GPS tracking
-document.getElementById('save-walk').addEventListener('click', function() {
-    var podcastName = document.getElementById('podcast-input').value;
-    
+document.getElementById('save-walk').addEventListener('click', function() {    
 
     
 
