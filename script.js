@@ -550,11 +550,15 @@ document.addEventListener('keydown', function(event) {
         undoLastMarker();
     }
 });
-
 let tracking = false;
 let watchID = null;
 let gpsPath = []; // Temporary GPS path storage
 let gpsPolyline = null;
+let userMarker; // Store the user's location marker
+
+// Initialize the map and other components as you already have
+const map = L.map('map').setView([59.3293, 18.0686], 13);  // Default to Stockholm
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
 // Function to start/stop tracking
 const toggleTracking = () => {
@@ -578,6 +582,19 @@ const toggleTracking = () => {
             gpsPath.push({ latLng: latlng });
             gpsPolyline.addLatLng(latlng);
             map.setView(latlng, 15);
+
+            // If the user marker doesn't exist, create it
+            if (!userMarker) {
+                userMarker = L.circle([latlng.lat, latlng.lng], {
+                    color: 'blue',
+                    fillColor: '#3388ff',
+                    fillOpacity: 0.6,
+                    radius: 10
+                }).addTo(map);
+            } else {
+                // Update the existing marker location
+                userMarker.setLatLng([latlng.lat, latlng.lng]);
+            }
         }, error => {
             console.error("Error getting location:", error);
         }, { enableHighAccuracy: true });
@@ -597,16 +614,13 @@ document.getElementById('save-walk').addEventListener('click', function() {
         return;
     }
     
-    if (pathHistory.length === 0 && gpsPath.length === 0) {
+    if (gpsPath.length === 0) {
         alert('Please walk and create a path before saving!');
         return;
     }
 
-    // Merge manually placed markers with GPS tracking if both exist
-    var combinedPath = [...pathHistory, ...gpsPath];
-
     // Ensure path only contains valid points
-    var validPathHistory = combinedPath.filter(function(path) {
+    var validPathHistory = gpsPath.filter(function(path) {
         return path.latLng && typeof path.latLng.lat === 'number' && typeof path.latLng.lng === 'number';
     });
 
@@ -632,9 +646,6 @@ document.getElementById('save-walk').addEventListener('click', function() {
     localStorage.setItem('walkHistory', JSON.stringify(storedHistory));
 
     // Reset everything for the next walk
-    markers.forEach(marker => map.removeLayer(marker));
-    markers = [];
-    pathHistory = [];
     gpsPath = [];
     document.getElementById('podcast-input').value = ''; 
 
@@ -648,104 +659,3 @@ document.getElementById('save-walk').addEventListener('click', function() {
 // Attach event to tracking button
 document.getElementById('toggleTracking').addEventListener('click', toggleTracking);
 
-
-
-let deferredPrompt;
-
-window.addEventListener('beforeinstallprompt', (event) => {
-  // Prevent the default prompt
-  event.preventDefault();
-  // Save the event to trigger later
-  deferredPrompt = event;
-
-  // Show your custom "Install" button or any UI here
-  const installButton = document.getElementById('install-button');
-  installButton.style.display = 'block';
-
-  installButton.addEventListener('click', () => {
-    // Show the prompt
-    deferredPrompt.prompt();
-    
-    // Wait for the user to respond to the prompt
-    deferredPrompt.userChoice.then((choiceResult) => {
-      if (choiceResult.outcome === 'accepted') {
-        console.log('User accepted the A2HS prompt');
-      } else {
-        console.log('User dismissed the A2HS prompt');
-      }
-      deferredPrompt = null;
-    });
-  });
-});
-
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/service-worker.js')
-        .then((registration) => {
-          console.log('Service Worker registered with scope:', registration.scope);
-        })
-        .catch((error) => {
-          console.log('Service Worker registration failed:', error);
-        });
-    });
-  }
-  
-let userMarker; // Store the user's location marker
-
-// Initialize the map and other components as you already have
-const map = L.map('map').setView([0, 0], 13); // Use default coordinates, they will be updated later
-
-// Add tile layer (ensure you have your map tiles correctly set up)
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-// Watch the user's location
-navigator.geolocation.watchPosition((position) => {
-    const lat = position.coords.latitude;
-    const lon = position.coords.longitude;
-
-    // If the user marker doesn't exist, create it
-    if (!userMarker) {
-        // Add a circle to the map to represent the user location
-        userMarker = L.circle([lat, lon], {
-            color: 'blue',
-            fillColor: '#3388ff',
-            fillOpacity: 0.6,
-            radius: 10
-        }).addTo(map);
-    } else {
-        // Update the existing marker location
-        userMarker.setLatLng([lat, lon]);
-    }
-
-    // Optionally, you can set the map's view to the user's current position
-    map.setView([lat, lon], 13);  // Set zoom level to 13 or adjust as needed
-
-}, (error) => {
-    console.error("Error getting location: ", error);
-}, {
-    enableHighAccuracy: true
-});
-
-
-// When the page loads, focus on the user's location
-window.onload = () => {
-    navigator.geolocation.getCurrentPosition((position) => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-
-        // Set the map's center to the user's location
-        map.setView([lat, lon], 13);  // Adjust zoom level as needed
-
-        // Optionally, you can also place a marker for the user’s initial location
-        if (!userMarker) {
-            userMarker = L.circle([lat, lon], {
-                color: 'blue',
-                fillColor: '#3388ff',
-                fillOpacity: 0.6,
-                radius: 10
-            }).addTo(map);
-        }
-    }, (error) => {
-        console.error("Error getting location: ", error);
-    });
-};
