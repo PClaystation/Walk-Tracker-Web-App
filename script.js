@@ -619,10 +619,7 @@ const toggleTracking = () => {
 document.getElementById('save-walk').addEventListener('click', function() {
     var podcastName = document.getElementById('podcast-input').value;
     
-    if (podcastName.trim() === '') {
-        alert('Please enter a podcast name!');
-        return;
-    }
+
     
 
     // Ensure path only contains valid points
