@@ -423,78 +423,68 @@ map.on('click', function(event) {
 
 // Function to save the walk with podcast name and date
 document.getElementById('save-walk').addEventListener('click', function() {
-    var podcastName = document.getElementById('podcast-input').value.trim();
+    var podcastName = document.getElementById('podcast-input').value;
     
-    // Check if the podcast name is empty
-    if (podcastName === '') {
+    if (podcastName.trim() === '') {
         alert('Please enter a podcast name!');
-        return; // Stop if no podcast name
+        return;
     }
     
-    // Check if there is any valid path (either gpsPath or pathHistory)
-    var validPathHistory = [];
-
-    // Check for GPS path
-    if (gpsPath.length > 0) {
-        validPathHistory = gpsPath.filter(function(path) {
-            return path.latLng && typeof path.latLng.lat === 'number' && typeof path.latLng.lng === 'number';
-        });
-    }
-    
-    // If no GPS path, check manual path (pathHistory)
-    if (validPathHistory.length === 0 && pathHistory.length > 0) {
-        validPathHistory = pathHistory.filter(function(path) {
-            return path.latLng && typeof path.latLng.lat === 'number' && typeof path.latLng.lng === 'number';
-        });
-    }
-    
-    // If no valid points in either path, show an alert
-    if (validPathHistory.length === 0) {
-        alert('Please walk and create a path before saving!');
+    if (pathHistory.length === 0) {
+        alert('Please walk and click on the map to create a path!');
         return;
     }
 
-    // Match podcast name with podcastData in a case-insensitive manner
-    let podcastMatchIndex = podcastData.findIndex(p => p.name.toLowerCase() === podcastName.toLowerCase());
+    // Ensure pathHistory only contains valid points
+    var validPathHistory = pathHistory.filter(function(path) {
+        return path.latLng && typeof path.latLng.lat === 'number' && typeof path.latLng.lng === 'number';
+    });
 
-    if (podcastMatchIndex === -1) {
-        alert('Podcast not found!');
-        return; // Stop if podcast not found
+    if (validPathHistory.length === 0) {
+        alert('No valid points to save!');
+        return;
     }
 
-    // Create the walk object
+    // Se om namnet på podcastName matchar med en podcast från listan
+    let podcastMatchIndex;
+    for (let i = 0; i < podcastData.length; i++) {
+        if (podcastData[i].name === podcastName) {
+            podcastMatchIndex = i;
+            break;
+        }
+    }
+
+    // Save the walk data to localStorage
     var savedWalk = {
         podcastIndex: podcastMatchIndex,
         podcast: podcastName,
-        points: validPathHistory.map(path => path.latLng),
-        date: new Date().toISOString() // Save current date/time
+        points: validPathHistory.map(function(path) {
+            return { lat: path.latLng.lat, lng: path.latLng.lng };
+        }),
+        date: new Date().toISOString() // Store the current date and time
     };
 
-    // Store in localStorage
+    // Get existing walks and add the new one
     var storedHistory = JSON.parse(localStorage.getItem('walkHistory')) || [];
     storedHistory.push(savedWalk);
     localStorage.setItem('walkHistory', JSON.stringify(storedHistory));
 
-    // Reset GPS path and remove markers for next walk
-    gpsPath = [];
-    markers.forEach(marker => map.removeLayer(marker));
+    // Reset pathHistory and markers for next walk
+    for(i = 0; i<markers.length; i++) {
+        var current = markers[i];
+
+        map.removeLayer(markers[i])
+    }
     markers = [];
-    
-    // Reset manual path (if you have one) if needed
-    pathHistory = []; 
+    pathHistory = [];
+    document.getElementById('podcast-input').value = ''; // Clear podcast input field
 
-    // Clear input field
-    document.getElementById('podcast-input').value = ''; 
-
-    // Update UI with new walk (assuming these functions are defined)
+    // Update the history list and add the new walk to the map
     addHistoryItem(savedWalk);
     addWalkToMap(savedWalk);
 
     console.log("Walk saved and cleared.");
 });
-
-
-
 
 // Function to clear paths and markers
 document.getElementById('clear-paths').addEventListener('click', function() {
@@ -624,6 +614,52 @@ const toggleTracking = () => {
 
     tracking = !tracking;
 };
+
+// Update save-walk button to support GPS tracking
+document.getElementById('save-walk').addEventListener('click', function() {
+    var podcastName = document.getElementById('podcast-input').value;
+    
+    // Ensure path only contains valid points
+    var validPathHistory = gpsPath.filter(function(path) {
+        return path.latLng && typeof path.latLng.lat === 'number' && typeof path.latLng.lng === 'number';
+    });
+
+    if (validPathHistory.length === 0) {
+        alert('No valid points to save!');
+        return;
+    }
+
+    // Match podcast name with list
+    let podcastMatchIndex = podcastData.findIndex(p => p.name === podcastName);
+
+    if (podcastMatchIndex === -1) {
+        alert('Podcast not found!');
+        return;
+    }
+
+    // Save walk data
+    var savedWalk = {
+        podcastIndex: podcastMatchIndex,
+        podcast: podcastName,
+        points: validPathHistory.map(path => path.latLng),
+        date: new Date().toISOString()
+    };
+
+    // Store in localStorage
+    var storedHistory = JSON.parse(localStorage.getItem('walkHistory')) || [];
+    storedHistory.push(savedWalk);
+    localStorage.setItem('walkHistory', JSON.stringify(storedHistory));
+
+    // Reset everything for the next walk
+    gpsPath = [];
+    document.getElementById('podcast-input').value = ''; 
+
+    // Update UI
+    addHistoryItem(savedWalk);
+    addWalkToMap(savedWalk);
+
+    console.log("Walk saved and cleared.");
+});
 
 // Attach event to tracking button
 document.getElementById('toggleTracking').addEventListener('click', toggleTracking);
