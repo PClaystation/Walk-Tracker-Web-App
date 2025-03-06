@@ -550,3 +550,31 @@ document.addEventListener('keydown', function(event) {
         undoLastMarker();
     }
 });
+
+
+let tracking = false;
+let watchID = null;
+
+const toggleTracking = () => {
+  if (tracking) {
+    // Stop tracking
+    if (watchID !== null) {
+      navigator.geolocation.clearWatch(watchID);
+      console.log("Tracking stopped.");
+    }
+    document.getElementById('toggleTracking').innerText = "Start Tracking";
+  } else {
+    // Start tracking
+    watchID = navigator.geolocation.watchPosition(position => {
+      console.log(`Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`);
+    }, error => {
+      console.error("Error getting location:", error);
+    }, { enableHighAccuracy: true });
+
+    document.getElementById('toggleTracking').innerText = "Stop Tracking";
+  }
+
+  tracking = !tracking;
+};
+
+document.getElementById('toggleTracking').addEventListener('click', toggleTracking);

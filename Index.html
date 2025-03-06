@@ -6,6 +6,7 @@
     <title>Walk Tracker</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
 </head>
 <body>
     <div id="map"></div>
@@ -26,8 +27,18 @@
     </div>
 
     <button id="clear-paths">Clear Paths</button>
+    <button id="toggleTracking">Start Tracking</button>
+
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="script.js"></script>
+    <script>
+        // Register Service Worker (Needed for PWA)
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('service-worker.js')
+            .then(() => console.log('Service Worker registered successfully.'))
+            .catch(error => console.log('Service Worker registration failed:', error));
+        }
+      </script>
 </body>
 </html>

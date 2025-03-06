@@ -81,6 +81,17 @@ h1, h3 {
     cursor: pointer;
 }
 
+#Start-Tracking {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
 #clear-paths:hover {
     background-color: #e53935;
 }
