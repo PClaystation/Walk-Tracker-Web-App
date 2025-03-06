@@ -1,5 +1,5 @@
 // Initialize the map and setup
-var map = L.map('map').setView([59.3293, 18.0686], 13); // Coordinates of Stockholm, Sweden for example
+const map = L.map('map').setView([59.3293, 18.0686], 13); // Coordinates of Stockholm, Sweden for example
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
@@ -550,6 +550,7 @@ document.addEventListener('keydown', function(event) {
         undoLastMarker();
     }
 });
+
 let tracking = false;
 let watchID = null;
 let gpsPath = []; // Temporary GPS path storage
@@ -569,7 +570,7 @@ const toggleTracking = () => {
         // Start tracking
         gpsPath = []; // Clear previous path
         if (gpsPolyline) {
-            map.removeLayer(gpsPolyline);
+            map.removeLayer(gpsPolyline); // Remove the previous polyline
         }
         gpsPolyline = L.polyline([], { color: 'blue' }).addTo(map);
 
@@ -577,7 +578,7 @@ const toggleTracking = () => {
             let latlng = { lat: position.coords.latitude, lng: position.coords.longitude };
             gpsPath.push({ latLng: latlng });
             gpsPolyline.addLatLng(latlng);
-            map.setView(latlng, 15);
+            map.setView(latlng, 15); // Optionally update map view
 
             // If the user marker doesn't exist, create it
             if (!userMarker) {
@@ -628,6 +629,11 @@ document.getElementById('save-walk').addEventListener('click', function() {
     // Match podcast name with list
     let podcastMatchIndex = podcastData.findIndex(p => p.name === podcastName);
 
+    if (podcastMatchIndex === -1) {
+        alert('Podcast not found!');
+        return;
+    }
+
     // Save walk data
     var savedWalk = {
         podcastIndex: podcastMatchIndex,
@@ -654,4 +660,3 @@ document.getElementById('save-walk').addEventListener('click', function() {
 
 // Attach event to tracking button
 document.getElementById('toggleTracking').addEventListener('click', toggleTracking);
-
