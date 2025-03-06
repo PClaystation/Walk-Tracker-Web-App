@@ -556,10 +556,6 @@ let gpsPath = []; // Temporary GPS path storage
 let gpsPolyline = null;
 let userMarker; // Store the user's location marker
 
-// Initialize the map and other components as you already have
-const map = L.map('map').setView([59.3293, 18.0686], 13);  // Default to Stockholm
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
 // Function to start/stop tracking
 const toggleTracking = () => {
     if (tracking) {
