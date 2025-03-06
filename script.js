@@ -690,3 +690,62 @@ if ('serviceWorker' in navigator) {
     });
   }
   
+let userMarker; // Store the user's location marker
+
+// Initialize the map and other components as you already have
+const map = L.map('map').setView([0, 0], 13); // Use default coordinates, they will be updated later
+
+// Add tile layer (ensure you have your map tiles correctly set up)
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+// Watch the user's location
+navigator.geolocation.watchPosition((position) => {
+    const lat = position.coords.latitude;
+    const lon = position.coords.longitude;
+
+    // If the user marker doesn't exist, create it
+    if (!userMarker) {
+        // Add a circle to the map to represent the user location
+        userMarker = L.circle([lat, lon], {
+            color: 'blue',
+            fillColor: '#3388ff',
+            fillOpacity: 0.6,
+            radius: 10
+        }).addTo(map);
+    } else {
+        // Update the existing marker location
+        userMarker.setLatLng([lat, lon]);
+    }
+
+    // Optionally, you can set the map's view to the user's current position
+    map.setView([lat, lon], 13);  // Set zoom level to 13 or adjust as needed
+
+}, (error) => {
+    console.error("Error getting location: ", error);
+}, {
+    enableHighAccuracy: true
+});
+
+
+// When the page loads, focus on the user's location
+window.onload = () => {
+    navigator.geolocation.getCurrentPosition((position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+
+        // Set the map's center to the user's location
+        map.setView([lat, lon], 13);  // Adjust zoom level as needed
+
+        // Optionally, you can also place a marker for the user’s initial location
+        if (!userMarker) {
+            userMarker = L.circle([lat, lon], {
+                color: 'blue',
+                fillColor: '#3388ff',
+                fillOpacity: 0.6,
+                radius: 10
+            }).addTo(map);
+        }
+    }, (error) => {
+        console.error("Error getting location: ", error);
+    });
+};
