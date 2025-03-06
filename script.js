@@ -551,33 +551,104 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
-
 let tracking = false;
 let watchID = null;
+let gpsPath = []; // Temporary GPS path storage
+let gpsPolyline = null;
 
+// Function to start/stop tracking
 const toggleTracking = () => {
-  if (tracking) {
-    // Stop tracking
-    if (watchID !== null) {
-      navigator.geolocation.clearWatch(watchID);
-      console.log("Tracking stopped.");
+    if (tracking) {
+        // Stop tracking
+        if (watchID !== null) {
+            navigator.geolocation.clearWatch(watchID);
+        }
+        document.getElementById('toggleTracking').innerText = "Start Tracking";
+        alert("Tracking stopped. Now enter the podcast name and save your walk.");
+    } else {
+        // Start tracking
+        gpsPath = []; // Clear previous path
+        if (gpsPolyline) {
+            map.removeLayer(gpsPolyline);
+        }
+        gpsPolyline = L.polyline([], { color: 'blue' }).addTo(map);
+
+        watchID = navigator.geolocation.watchPosition(position => {
+            let latlng = { lat: position.coords.latitude, lng: position.coords.longitude };
+            gpsPath.push({ latLng: latlng });
+            gpsPolyline.addLatLng(latlng);
+            map.setView(latlng, 15);
+        }, error => {
+            console.error("Error getting location:", error);
+        }, { enableHighAccuracy: true });
+
+        document.getElementById('toggleTracking').innerText = "Stop Tracking";
     }
-    document.getElementById('toggleTracking').innerText = "Start Tracking";
-  } else {
-    // Start tracking
-    watchID = navigator.geolocation.watchPosition(position => {
-      console.log(`Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`);
-    }, error => {
-      console.error("Error getting location:", error);
-    }, { enableHighAccuracy: true });
 
-    document.getElementById('toggleTracking').innerText = "Stop Tracking";
-  }
-
-  tracking = !tracking;
+    tracking = !tracking;
 };
 
+// Update save-walk button to support GPS tracking
+document.getElementById('save-walk').addEventListener('click', function() {
+    var podcastName = document.getElementById('podcast-input').value;
+    
+    if (podcastName.trim() === '') {
+        alert('Please enter a podcast name!');
+        return;
+    }
+    
+    if (pathHistory.length === 0 && gpsPath.length === 0) {
+        alert('Please walk and create a path before saving!');
+        return;
+    }
+
+    // Merge manually placed markers with GPS tracking if both exist
+    var combinedPath = [...pathHistory, ...gpsPath];
+
+    // Ensure path only contains valid points
+    var validPathHistory = combinedPath.filter(function(path) {
+        return path.latLng && typeof path.latLng.lat === 'number' && typeof path.latLng.lng === 'number';
+    });
+
+    if (validPathHistory.length === 0) {
+        alert('No valid points to save!');
+        return;
+    }
+
+    // Match podcast name with list
+    let podcastMatchIndex = podcastData.findIndex(p => p.name === podcastName);
+
+    // Save walk data
+    var savedWalk = {
+        podcastIndex: podcastMatchIndex,
+        podcast: podcastName,
+        points: validPathHistory.map(path => path.latLng),
+        date: new Date().toISOString()
+    };
+
+    // Store in localStorage
+    var storedHistory = JSON.parse(localStorage.getItem('walkHistory')) || [];
+    storedHistory.push(savedWalk);
+    localStorage.setItem('walkHistory', JSON.stringify(storedHistory));
+
+    // Reset everything for the next walk
+    markers.forEach(marker => map.removeLayer(marker));
+    markers = [];
+    pathHistory = [];
+    gpsPath = [];
+    document.getElementById('podcast-input').value = ''; 
+
+    // Update UI
+    addHistoryItem(savedWalk);
+    addWalkToMap(savedWalk);
+
+    console.log("Walk saved and cleared.");
+});
+
+// Attach event to tracking button
 document.getElementById('toggleTracking').addEventListener('click', toggleTracking);
+
+
 
 let deferredPrompt;
 
