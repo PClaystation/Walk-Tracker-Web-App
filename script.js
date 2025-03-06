@@ -557,6 +557,29 @@ let gpsPath = []; // Temporary GPS path storage
 let gpsPolyline = null;
 let userMarker; // Store the user's location marker
 
+// Function to create the initial user marker on load (before tracking starts)
+const createUserMarker = (latlng) => {
+    if (!userMarker) {
+        userMarker = L.circle([latlng.lat, latlng.lng], {
+            color: 'blue',
+            fillColor: '#3388ff',
+            fillOpacity: 0.6,
+            radius: 10
+        }).addTo(map);
+    } else {
+        userMarker.setLatLng([latlng.lat, latlng.lng]); // Update the marker location if it exists
+    }
+};
+
+// Get the user's current position on page load (for the initial marker)
+navigator.geolocation.getCurrentPosition(position => {
+    let latlng = { lat: position.coords.latitude, lng: position.coords.longitude };
+    createUserMarker(latlng); // Create the marker initially
+    map.setView(latlng, 15); // Optionally, adjust the map view to the user's location
+}, error => {
+    console.error("Error getting initial location:", error);
+});
+
 // Function to start/stop tracking
 const toggleTracking = () => {
     if (tracking) {
@@ -580,18 +603,8 @@ const toggleTracking = () => {
             gpsPolyline.addLatLng(latlng);
             map.setView(latlng, 15); // Optionally update map view
 
-            // If the user marker doesn't exist, create it
-            if (!userMarker) {
-                userMarker = L.circle([latlng.lat, latlng.lng], {
-                    color: 'blue',
-                    fillColor: '#3388ff',
-                    fillOpacity: 0.6,
-                    radius: 10
-                }).addTo(map);
-            } else {
-                // Update the existing marker location
-                userMarker.setLatLng([latlng.lat, latlng.lng]);
-            }
+            // Update the marker location
+            createUserMarker(latlng);
         }, error => {
             console.error("Error getting location:", error);
         }, { enableHighAccuracy: true });
