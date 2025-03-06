@@ -624,10 +624,6 @@ document.getElementById('save-walk').addEventListener('click', function() {
         return;
     }
     
-    if (gpsPath.length === 0) {
-        alert('Please walk and create a path before saving!');
-        return;
-    }
 
     // Ensure path only contains valid points
     var validPathHistory = gpsPath.filter(function(path) {
