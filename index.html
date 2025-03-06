@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Walk Tracker</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="./manifest.json">
+    <link rel="stylesheet" href="/Walk-Tracker-Web-App/style.css">
+    <link rel="manifest" href="/Walk-Tracker-Web-App/manifest.json">
 </head>
 <body>
     <div id="map"></div>
@@ -31,11 +31,12 @@
 
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script src="script.js"></script>
+    <script src="/Walk-Tracker-Web-App/script.js"></script>
+
     <script>
         if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./service-worker.js')
+            navigator.serviceWorker.register('/Walk-Tracker-Web-App/service-worker.js')
             .then((registration) => {
                 console.log('Service Worker registered with scope:', registration.scope);
             })
