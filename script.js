@@ -440,6 +440,11 @@ document.getElementById('save-walk').addEventListener('click', function() {
         return path.latLng && typeof path.latLng.lat === 'number' && typeof path.latLng.lng === 'number';
     });
 
+    if (validPathHistory.length === 0) {
+        alert('No valid points to save!');
+        return;
+    }
+
     // Se om namnet på podcastName matchar med en podcast från listan
     let podcastMatchIndex;
     for (let i = 0; i < podcastData.length; i++) {
@@ -620,18 +625,9 @@ document.getElementById('save-walk').addEventListener('click', function() {
         return path.latLng && typeof path.latLng.lat === 'number' && typeof path.latLng.lng === 'number';
     });
 
-    if (validPathHistory.length === 0) {
-        alert('No valid points to save!');
-        return;
-    }
-
     // Match podcast name with list
     let podcastMatchIndex = podcastData.findIndex(p => p.name === podcastName);
 
-    if (podcastMatchIndex === -1) {
-        alert('Podcast not found!');
-        return;
-    }
 
     // Save walk data
     var savedWalk = {
