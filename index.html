@@ -30,16 +30,6 @@
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
-        // Initialize the map
-        var map = L.map('map').setView([0, 0], 13); // Default view
-
-        // Add OpenStreetMap tiles
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
-
-        var marker = L.marker([0, 0]).addTo(map); // Default marker
-
         // Connect to WebSocket server
         var socket = new WebSocket("wss://mpmc.ddns.net:3000");
 

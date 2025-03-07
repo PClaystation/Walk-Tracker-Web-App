@@ -553,7 +553,7 @@ let gpsPath = []; // Temporary GPS path storage
 let gpsPolyline = null;
 let userMarker; // Store the user's location marker
 
-// Function to create the initial user marker on load (before tracking starts)
+// Function to create or update the user marker
 const createUserMarker = (latlng) => {
     if (!userMarker) {
         userMarker = L.circle([latlng.lat, latlng.lng], {
@@ -563,11 +563,11 @@ const createUserMarker = (latlng) => {
             radius: 10
         }).addTo(map);
     } else {
-        userMarker.setLatLng([latlng.lat, latlng.lng]); // Update the marker location if it exists
+        userMarker.setLatLng([latlng.lat, latlng.lng]); // Update the marker location
     }
 };
 
-// Get the user's current position on page load (for the initial marker)
+// Get the user's initial position for setting the marker and centering the map
 navigator.geolocation.getCurrentPosition(position => {
     let latlng = { lat: position.coords.latitude, lng: position.coords.longitude };
     createUserMarker(latlng); // Create the marker initially
@@ -611,19 +611,15 @@ const toggleTracking = () => {
     tracking = !tracking;
 };
 
-// Update save-walk button to support GPS tracking
+// Save walk data when the user clicks the "Save Walk" button
 document.getElementById('save-walk').addEventListener('click', function() {    
-
-    
-
     // Ensure path only contains valid points
     var validPathHistory = gpsPath.filter(function(path) {
         return path.latLng && typeof path.latLng.lat === 'number' && typeof path.latLng.lng === 'number';
     });
 
-    // Match podcast name with list
+    // Match podcast name with list (you need to implement podcastData)
     let podcastMatchIndex = podcastData.findIndex(p => p.name === podcastName);
-
 
     // Save walk data
     var savedWalk = {
@@ -642,7 +638,7 @@ document.getElementById('save-walk').addEventListener('click', function() {
     gpsPath = [];
     document.getElementById('podcast-input').value = ''; 
 
-    // Update UI
+    // Update UI (implement these functions)
     addHistoryItem(savedWalk);
     addWalkToMap(savedWalk);
 
@@ -651,3 +647,31 @@ document.getElementById('save-walk').addEventListener('click', function() {
 
 // Attach event to tracking button
 document.getElementById('toggleTracking').addEventListener('click', toggleTracking);
+
+// WebSocket connection and handling
+var socket = new WebSocket("wss://mpmc.ddns.net:3000");
+
+socket.onopen = function() {
+    console.log("Connected to WebSocket server");
+};
+
+socket.onmessage = function(event) {
+    try {
+        let data = JSON.parse(event.data);
+        if (data.lat && data.lng) {
+            console.log("Received location:", data);
+
+            // Update marker position
+            marker.setLatLng([data.lat, data.lng]);
+
+            // Center map on new location
+            map.setView([data.lat, data.lng], 13);
+        }
+    } catch (error) {
+        console.error("Error parsing WebSocket message:", error);
+    }
+};
+
+socket.onerror = function(error) {
+    console.error("WebSocket error:", error);
+};
