@@ -93,8 +93,16 @@ const podcastData = [
 
 class Map {
     constructor(podcastList) {
+        this.mapTypes = {
+            open: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            light: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+            dark: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+            satelite: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+            topographic: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+        }
+
         this.map = L.map('map').setView([59.3293, 18.0686], 13); // Coordinates of Stockholm, Sweden for example
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
+        L.tileLayer(this.mapTypes.topographic).addTo(this.map);
 
         this.markers = [];
 
@@ -122,8 +130,7 @@ class Map {
         // Remove all previous walks from map and list
         historyList.innerHTML = '';
 
-        
-        this.visibleWalks.forEach(walk => { // This is not working properly
+        this.visibleWalks.forEach(walk => { 
             this.removeWalkFromMap(walk);            
         });
 
