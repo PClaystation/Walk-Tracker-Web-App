@@ -11,7 +11,6 @@
 <body>
     <div id="map"></div>
     
-    <!-- Move the input and save button above the history -->
     <div class="input-container">
         <label for="podcast-input">Podcast Name:</label>
         <input type="text" id="podcast-input" placeholder="Enter Podcast Name">
@@ -29,32 +28,69 @@
     <button id="clear-paths">Clear Paths</button>
     <button id="toggleTracking">Start Tracking</button>
 
-
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        // Initialize the map
+        var map = L.map('map').setView([0, 0], 13); // Default view
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        var marker = L.marker([0, 0]).addTo(map); // Default marker
+
+        // Connect to WebSocket server
+        var socket = new WebSocket("wss://mpmc.ddns.net:3000");
+
+        socket.onopen = function() {
+            console.log("Connected to WebSocket server");
+        };
+
+        socket.onmessage = function(event) {
+            try {
+                let data = JSON.parse(event.data);
+                if (data.lat && data.lng) {
+                    console.log("Received location:", data);
+
+                    // Update marker position
+                    marker.setLatLng([data.lat, data.lng]);
+
+                    // Center map on new location
+                    map.setView([data.lat, data.lng], 13);
+                }
+            } catch (error) {
+                console.error("Error parsing WebSocket message:", error);
+            }
+        };
+
+        socket.onerror = function(error) {
+            console.error("WebSocket error:", error);
+        };
+    </script>
+
     <script src="/Walk-Tracker-Web-App/script.js"></script>
 
     <script>
         if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/Walk-Tracker-Web-App/service-worker.js')
-            .then((registration) => {
-                console.log('Service Worker registered with scope:', registration.scope);
-            })
-            .catch((error) => {
-                console.error('Service Worker registration failed:', error);
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/Walk-Tracker-Web-App/service-worker.js')
+                .then((registration) => {
+                    console.log('Service Worker registered with scope:', registration.scope);
+                })
+                .catch((error) => {
+                    console.error('Service Worker registration failed:', error);
+                });
             });
-        });
         }
-        
+    </script>
 
-      </script>
-      <script>
+    <script>
         if (window.matchMedia('(display-mode: standalone)').matches) {
             if (!location.pathname.startsWith('/Walk-Tracker-Web-App/')) {
                 location.href = '/Walk-Tracker-Web-App/';
             }
         }
-
-      </script>
+    </script>
 </body>
 </html>
