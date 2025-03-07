@@ -29,35 +29,6 @@
     <button id="toggleTracking">Start Tracking</button>
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script>
-        // Connect to WebSocket server
-        var socket = new WebSocket("wss://mpmc.ddns.net:3000");
-
-        socket.onopen = function() {
-            console.log("Connected to WebSocket server");
-        };
-
-        socket.onmessage = function(event) {
-            try {
-                let data = JSON.parse(event.data);
-                if (data.lat && data.lng) {
-                    console.log("Received location:", data);
-
-                    // Update marker position
-                    marker.setLatLng([data.lat, data.lng]);
-
-                    // Center map on new location
-                    map.setView([data.lat, data.lng], 13);
-                }
-            } catch (error) {
-                console.error("Error parsing WebSocket message:", error);
-            }
-        };
-
-        socket.onerror = function(error) {
-            console.error("WebSocket error:", error);
-        };
-    </script>
 
     <script src="/Walk-Tracker-Web-App/script.js"></script>
 
