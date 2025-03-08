@@ -1,14 +1,3 @@
-// Initialize the map and setup
-/*var map = L.map('map').setView([59.3293, 18.0686], 13); // Coordinates of Stockholm, Sweden for example
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-var markers = [];  // Array to store markers
-var pathHistory = []; // Array to store the path history
-var polylines = []; // Array to store polylines
-let isPlacingMarkers = true;  // Initially, marker placement is enabled
-*/
-
 const saveWalkButton = document.getElementById('save-walk');
 const clearWalksButton = document.getElementById('clear-paths');
 const podcastNameInput = document.getElementById('podcast-input');
@@ -375,13 +364,13 @@ testMap.showExistingWalks();
 
 // Handling events
 
-testMap.map.on('mouseover', '.leaflet-interactive', (event) => {
+testMap.map.on('mouseover', (event) => {
     if (event.target instanceof L.Polyline || event.target instanceof L.Polygon) {
         testMap.isHoveringPolyline = true; // The mouse is over a polyline or polygon
     }
 });
 
-testMap.map.on('mouseout', '.leaflet-interactive', (event) => {
+testMap.map.on('mouseout', (event) => {
     if (event.target instanceof L.Polyline || event.target instanceof L.Polygon) {
         testMap.isHoveringPolyline = false; // The mouse is no longer over a polyline or polygon
     }
