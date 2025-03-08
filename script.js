@@ -649,3 +649,87 @@ socket.onmessage = function(event) {
 socket.onerror = function(error) {
     console.error("WebSocket error:", error);
 };
+
+document.addEventListener('DOMContentLoaded', () => {
+    const loginForm = document.getElementById('loginForm');
+    const overlay = document.getElementById('overlay');
+    const loginPopup = document.getElementById('loginPopup');
+    const logoutButton = document.getElementById('logoutButton');
+
+    // Function to check authentication and show/hide login popup
+    function checkAuth() {
+        const authToken = localStorage.getItem('authToken');
+        if (authToken) {
+            // Hide login and overlay
+            loginPopup.style.display = 'none';
+            overlay.style.display = 'none';
+        } else {
+            // Show login and overlay
+            loginPopup.style.display = 'block';
+            overlay.style.display = 'block';
+        }
+    }
+
+    // Handle login form submission
+    loginForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        try {
+            const response = await fetch('http://localhost:5000/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                localStorage.setItem('authToken', data.token);
+                console.log('Login successful!');
+                checkAuth(); // Hide login popup
+            } else {
+                console.error('Login failed:', data.message);
+            }
+        } catch (error) {
+            console.error('Error logging in:', error);
+        }
+    });
+
+    // Fetch protected data
+    async function fetchUserData() {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            console.log('You need to log in first!');
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:5000/protectedRoute', {
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${authToken}` },
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                console.log('User data:', data);
+            } else {
+                console.log('Failed to fetch user data:', data.message);
+            }
+        } catch (error) {
+            console.error('Error fetching user data:', error);
+        }
+    }
+
+    // Logout functionality
+    logoutButton.addEventListener('click', () => {
+        localStorage.removeItem('authToken');
+        console.log('Logged out!');
+        checkAuth(); // Show login popup again
+    });
+
+    checkAuth(); // Run on page load
+    fetchUserData(); // Fetch user data on load
+});

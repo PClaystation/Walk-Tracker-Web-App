@@ -81,16 +81,28 @@ h1, h3 {
     cursor: pointer;
 }
 
-#Start-Tracking {
+#toggleTracking {
     display: block;
     margin: 20px auto;
     padding: 10px 20px;
-    background-color: #f44336;
+    background-color: #36f452;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
 }
+
+#logoutButton {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #840900;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
 
 #clear-paths:hover {
     background-color: #e53935;
@@ -120,4 +132,45 @@ h1, h3 {
     color: red;
     font-size: 18px;
     margin-left: 10px; /* Space between text and the trash can */
+}
+
+/* Blurred background */
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    display: none;
+    z-index: 10;
+}
+
+/* Centered login popup */
+#loginPopup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    display: none;
+    z-index: 20;
+}
+
+/* Style the login form */
+#loginForm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Error message */
+#loginError {
+    color: red;
+    font-size: 14px;
+    text-align: center;
 }
