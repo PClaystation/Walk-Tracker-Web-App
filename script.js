@@ -664,6 +664,28 @@ window.addEventListener('load', () => {
     const signUpError = document.getElementById('signUpError');
     const loginChoice = document.getElementById('loginChoice');
     const signUpChoice = document.getElementById('signUpChoice');
+
+    // Show Login Popup
+    loginButton.addEventListener('click', () => {
+        loginPopup.style.display = 'block';
+        signUpPopup.style.display = 'none';  // Hide sign-up if login is clicked
+        overlay.style.display = 'block';  // Show overlay
+    });
+
+    // Show Sign Up Popup
+    signUpButton.addEventListener('click', () => {
+        signUpPopup.style.display = 'block';
+        loginPopup.style.display = 'none';  // Hide login if sign-up is clicked
+        overlay.style.display = 'block';  // Show overlay
+    });
+
+    // Close Popups
+    overlay.addEventListener('click', () => {
+        loginPopup.style.display = 'none';
+        signUpPopup.style.display = 'none';
+        overlay.style.display = 'none';  // Hide overlay
+    });
+
     
     // Function to check authentication and show/hide login popup
     function checkAuth() {
