@@ -691,24 +691,44 @@ window.addEventListener('load', () => {
         console.log("📝 Submitting login form...");
 
         try {
+            console.log("Email:", email);
+            console.log("Password:", password);
+        
+            // Make the POST request to the login API
             const response = await fetch('https://mpmc.ddns.net:5000/api/auth/login', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                },
                 body: JSON.stringify({ email, password }),
             });
-
+        
+            // Check if the response is OK (status 200-299)
+            if (!response.ok) {
+                // Log the raw response for debugging purposes
+                const errorText = await response.text();
+                console.error('❌ Login failed. Server responded with:', errorText);
+                return;
+            }
+        
+            // Parse the response JSON
             const data = await response.json();
-
-            if (response.ok) {
+            console.log('Received data:', data);
+        
+            if (data.token) {
+                // Successfully logged in, store the token
                 localStorage.setItem('authToken', data.token);
                 console.log('✅ Login successful!');
-                checkAuth(); // Hide login popup
+                checkAuth(); // Hide login popup or update the UI
             } else {
-                console.error('❌ Login failed:', data.message);
+                // Handle case where token isn't present in response
+                console.error('❌ Token not received:', data.message);
             }
         } catch (error) {
+            // Handle and log any unexpected errors
             console.error('⚠️ Error logging in:', error);
         }
+        
     });
 
     // Fetch protected data
