@@ -685,7 +685,6 @@ window.addEventListener('load', () => {
         signUpPopup.style.display = 'none';
         overlay.style.display = 'none';  // Hide overlay
     });
-
     
     // Function to check authentication and show/hide login popup
     function checkAuth() {

@@ -151,18 +151,17 @@ h1, h3 {
 
 /* Login popup should be above everything */
 #loginPopup, #signUpPopup {
-    position: fixed; /* Use fixed positioning for the popup */
+    position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%); /* Center the popup */
+    transform: translate(-50%, -50%);
     padding: 20px;
     background: white;
     border-radius: 8px;
-    z-index: 3; /* Above overlay and map */
+    z-index: 3;
     display: none; /* Hide by default */
-    max-height: 80%;
-    overflow-y: auto;
 }
+
 
 /* Style the login form */
 #loginForm {
