@@ -650,11 +650,15 @@ socket.onerror = function(error) {
     console.error("WebSocket error:", error);
 };
 
-document.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('load', () => {
+    console.log("Window loaded and script running!");
+
     const loginForm = document.getElementById('loginForm');
     const overlay = document.getElementById('overlay');
     const loginPopup = document.getElementById('loginPopup');
     const logoutButton = document.getElementById('logoutButton');
+
+    console.log("Login Form:", loginForm);
 
     // Function to check authentication and show/hide login popup
     function checkAuth() {
