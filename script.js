@@ -654,38 +654,12 @@ window.addEventListener('load', () => {
     console.log("Window loaded and script running!");
 
     const loginForm = document.getElementById('loginForm');
-    const signUpForm = document.getElementById('signUpForm');
     const overlay = document.getElementById('overlay');
     const loginPopup = document.getElementById('loginPopup');
-    const signUpPopup = document.getElementById('signUpPopup');
     const logoutButton = document.getElementById('logoutButton');
-    const initialPopup = document.getElementById('initialPopup');
-    const loginError = document.getElementById('loginError');
-    const signUpError = document.getElementById('signUpError');
-    const loginChoice = document.getElementById('loginChoice');
-    const signUpChoice = document.getElementById('signUpChoice');
 
-    // Show Login Popup
-    loginButton.addEventListener('click', () => {
-        loginPopup.style.display = 'block';
-        signUpPopup.style.display = 'none';  // Hide sign-up if login is clicked
-        overlay.style.display = 'block';  // Show overlay
-    });
+    console.log("Login Form:", loginForm);
 
-    // Show Sign Up Popup
-    signUpButton.addEventListener('click', () => {
-        signUpPopup.style.display = 'block';
-        loginPopup.style.display = 'none';  // Hide login if sign-up is clicked
-        overlay.style.display = 'block';  // Show overlay
-    });
-
-    // Close Popups
-    overlay.addEventListener('click', () => {
-        loginPopup.style.display = 'none';
-        signUpPopup.style.display = 'none';
-        overlay.style.display = 'none';  // Hide overlay
-    });
-    
     // Function to check authentication and show/hide login popup
     function checkAuth() {
         console.log('Checking auth status...');
@@ -694,23 +668,19 @@ window.addEventListener('load', () => {
     
         if (authToken) {
             loginPopup.style.display = 'none';
-            signUpPopup.style.display = 'none';
-            initialPopup.style.display = 'none';
             overlay.style.display = 'none';
-            logoutButton.style.display = 'block';  // Show logout button
         } else {
-            loginPopup.style.display = 'none';
-            signUpPopup.style.display = 'none';
-            initialPopup.style.display = 'block';  // Show initial options (Login/Sign Up)
+            loginPopup.style.display = 'block';
             overlay.style.display = 'block';
-            logoutButton.style.display = 'none';  // Hide logout button
         }
     }
+    
+    
 
     // Handle login form submission
     loginForm.addEventListener('submit', async function (event) {
         event.preventDefault();
-        
+
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
 
@@ -726,47 +696,39 @@ window.addEventListener('load', () => {
             if (response.ok) {
                 localStorage.setItem('authToken', data.token);
                 console.log('Login successful!');
-                checkAuth(); // Hide login popup and show logout button
+                checkAuth(); // Hide login popup
             } else {
-                loginError.innerText = data.message || 'Invalid credentials!';
                 console.error('Login failed:', data.message);
             }
         } catch (error) {
             console.error('Error logging in:', error);
-            loginError.innerText = 'Something went wrong. Please try again later.';
         }
     });
 
-    // Handle sign-up form submission
-    signUpForm.addEventListener('submit', async function (event) {
-        event.preventDefault();
-        
-        const email = document.getElementById('signUpEmail').value;
-        const password = document.getElementById('signUpPassword').value;
+    // Fetch protected data
+    async function fetchUserData() {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            console.log('You need to log in first!');
+            return;
+        }
 
         try {
-            const response = await fetch('http://localhost:5000/signup', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
+            const response = await fetch('http://localhost:5000/protectedRoute', {
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${authToken}` },
             });
 
             const data = await response.json();
-
             if (response.ok) {
-                console.log('Sign up successful!');
-                loginPopup.style.display = 'block'; // Show login form after successful sign-up
-                signUpPopup.style.display = 'none'; // Hide sign-up form
-                checkAuth(); // Check authentication after sign-up
+                console.log('User data:', data);
             } else {
-                signUpError.innerText = data.message || 'Sign up failed. Try again.';
-                console.error('Sign-up failed:', data.message);
+                console.log('Failed to fetch user data:', data.message);
             }
         } catch (error) {
-            console.error('Error signing up:', error);
-            signUpError.innerText = 'Something went wrong. Please try again later.';
+            console.error('Error fetching user data:', error);
         }
-    });
+    }
 
     // Logout functionality
     logoutButton.addEventListener('click', () => {
@@ -775,18 +737,6 @@ window.addEventListener('load', () => {
         checkAuth(); // Show login popup again
     });
 
-    // Show Login form when Login button is clicked
-    loginChoice.addEventListener('click', () => {
-        initialPopup.style.display = 'none';
-        loginPopup.style.display = 'block';
-    });
-
-    // Show Sign Up form when Sign Up button is clicked
-    signUpChoice.addEventListener('click', () => {
-        initialPopup.style.display = 'none';
-        signUpPopup.style.display = 'block';
-    });
-
-    // Check auth on page load
-    checkAuth();
+    checkAuth(); // Run on page load
+    fetchUserData(); // Fetch user data on load
 });

@@ -150,18 +150,17 @@ h1, h3 {
 }
 
 /* Login popup should be above everything */
-#loginPopup, #signUpPopup {
-    position: fixed;
+#loginPopup {
+    position: fixed; /* Use fixed positioning for the popup */
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%); /* Center the popup */
     padding: 20px;
     background: white;
     border-radius: 8px;
-    z-index: 3;
+    z-index: 3; /* Above overlay and map */
     display: none; /* Hide by default */
 }
-
 
 /* Style the login form */
 #loginForm {
@@ -171,7 +170,7 @@ h1, h3 {
 }
 
 /* Error message */
-#loginError, #signUpError {
+#loginError {
     color: red;
     font-size: 14px;
     text-align: center;

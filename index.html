@@ -27,41 +27,11 @@
 
     <button id="clear-paths">Clear Paths</button>
     <button id="toggleTracking">Start Tracking</button>
-    <button id="logoutButton" style="display:none;">Logout</button>
+    <button id="logoutButton">Logout</button>
 
-    <!-- Blurred Background -->
-    <div id="overlay"></div>
-
-    <!-- Initial Choice Popup -->
-    <div id="initialPopup">
-        <h2>Welcome! Please Choose an Option:</h2>
-        <button id="loginChoice">Login</button>
-        <button id="signUpChoice">Sign Up</button>
-    </div>
-
-    <!-- Login Popup -->
-    <div id="loginPopup" style="display:none;">
-        <form id="loginForm">
-            <h2>Login</h2>
-            <input type="email" id="email" placeholder="Email" required />
-            <input type="password" id="password" placeholder="Password" required />
-            <button type="submit">Login</button>
-            <p id="loginError"></p>
-        </form>
-    </div>
-
-    <!-- Sign Up Popup -->
-    <div id="signUpPopup" style="display:none;">
-        <form id="signUpForm">
-            <h2>Sign Up</h2>
-            <input type="email" id="signUpEmail" placeholder="Email" required />
-            <input type="password" id="signUpPassword" placeholder="Password" required />
-            <button type="submit">Sign Up</button>
-            <p id="signUpError"></p>
-        </form>
-    </div>
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
     <script src="/Walk-Tracker-Web-App/script.js"></script>
 
     <script>
@@ -76,7 +46,9 @@
                 });
             });
         }
+    </script>
 
+    <script>
         if (window.matchMedia('(display-mode: standalone)').matches) {
             if (!location.pathname.startsWith('/Walk-Tracker-Web-App/')) {
                 location.href = '/Walk-Tracker-Web-App/';
