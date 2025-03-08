@@ -16,6 +16,22 @@ h1, h3 {
     height: 500px;
 }
 
+#undo-btn {
+    margin: 10px;
+    width: 50px;
+    height: 50px;
+    border: none;
+    outline: none;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+#undo-btn:hover {
+    background-color: rgb(248, 248, 248);
+}
+
 /* Styling for the input container */
 .input-container {
     width: 80%;
@@ -31,8 +47,13 @@ h1, h3 {
 
 #podcast-input {
     width: 70%;
+    height: 20px;
     padding: 8px;
     margin-right: 10px;
+    margin-left: 10px;
+    border: none;
+    background: rgb(241, 241, 241);
+    border-radius: 5px;
 }
 
 #save-walk {
