@@ -6,7 +6,7 @@ const undoButton = document.getElementById('undo-btn');
 
 const podcastData = [
     {
-        name: 'Midnight burger',
+        name: 'Midnight Burger',
         color: '#FF5733',
         logoUrl: 'Images/Midnight_burger.jpeg',  // Replace with the actual logo URL
         path: []
