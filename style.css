@@ -150,7 +150,7 @@ h1, h3 {
 }
 
 /* Login popup should be above everything */
-#loginPopup {
+#loginPopup, #signUpPopup {
     position: fixed; /* Use fixed positioning for the popup */
     top: 50%;
     left: 50%;
@@ -160,6 +160,8 @@ h1, h3 {
     border-radius: 8px;
     z-index: 3; /* Above overlay and map */
     display: none; /* Hide by default */
+    max-height: 80%;
+    overflow-y: auto;
 }
 
 /* Style the login form */
@@ -170,7 +172,7 @@ h1, h3 {
 }
 
 /* Error message */
-#loginError {
+#loginError, #signUpError {
     color: red;
     font-size: 14px;
     text-align: center;
