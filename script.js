@@ -662,17 +662,20 @@ window.addEventListener('load', () => {
 
     // Function to check authentication and show/hide login popup
     function checkAuth() {
+        console.log('Checking auth status...');
         const authToken = localStorage.getItem('authToken');
+        console.log('Auth token:', authToken);  // Check if it's null or a valid token
+    
         if (authToken) {
-            // Hide login and overlay
             loginPopup.style.display = 'none';
             overlay.style.display = 'none';
         } else {
-            // Show login and overlay
             loginPopup.style.display = 'block';
             overlay.style.display = 'block';
         }
     }
+    
+    
 
     // Handle login form submission
     loginForm.addEventListener('submit', async function (event) {
