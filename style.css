@@ -14,8 +14,6 @@ h1, h3 {
 #map {
     width: 100%;
     height: 500px;
-    z-index: 1; /* Lower value to make it stay behind the login popup */
-
 }
 
 /* Styling for the input container */
@@ -137,29 +135,30 @@ h1, h3 {
 }
 
 /* Blurred background */
-/* Overlay to cover the map */
 #overlay {
-    position: fixed; /* Use fixed positioning to cover the whole screen */
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* Add a semi-transparent background */
-    z-index: 2; /* Slightly above the map */
-    display: none; /* Hide by default */
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    display: none;
+    z-index: 10;
 }
 
-/* Login popup should be above everything */
+/* Centered login popup */
 #loginPopup {
-    position: fixed; /* Use fixed positioning for the popup */
+    position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%); /* Center the popup */
-    padding: 20px;
+    transform: translate(-50%, -50%);
     background: white;
-    border-radius: 8px;
-    z-index: 3; /* Above overlay and map */
-    display: none; /* Hide by default */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    display: none;
+    z-index: 20;
 }
 
 /* Style the login form */
