@@ -10,7 +10,7 @@
 </head>
 <body>
     <div id="map"></div>
-    
+
     <div class="input-container">
         <label for="podcast-input">Podcast Name:</label>
         <input type="text" id="podcast-input" placeholder="Enter Podcast Name">
@@ -29,9 +29,21 @@
     <button id="toggleTracking">Start Tracking</button>
     <button id="logoutButton">Logout</button>
 
+    <!-- 🔥 Missing Login Popup Added Here -->
+    <div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);"></div>
+
+    <div id="loginPopup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px;">
+        <h3>Login</h3>
+        <form id="loginForm">
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" required>
+            <button type="submit">Login</button>
+        </form>
+    </div>
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-
     <script src="/Walk-Tracker-Web-App/script.js"></script>
 
     <script>

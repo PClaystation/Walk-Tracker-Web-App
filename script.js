@@ -651,31 +651,35 @@ socket.onerror = function(error) {
 };
 
 window.addEventListener('load', () => {
-    console.log("Window loaded and script running!");
+    console.log("🔥 Window loaded and script running!");
 
     const loginForm = document.getElementById('loginForm');
     const overlay = document.getElementById('overlay');
     const loginPopup = document.getElementById('loginPopup');
     const logoutButton = document.getElementById('logoutButton');
 
-    console.log("Login Form:", loginForm);
+    if (!loginForm || !overlay || !loginPopup || !logoutButton) {
+        console.error("❌ One or more elements are missing!");
+        return;
+    }
+
+    console.log("✅ Elements found successfully!");
 
     // Function to check authentication and show/hide login popup
     function checkAuth() {
-        console.log('Checking auth status...');
+        console.log('🔍 Checking auth status...');
         const authToken = localStorage.getItem('authToken');
-        console.log('Auth token:', authToken);  // Check if it's null or a valid token
-    
+        console.log('🔑 Auth token:', authToken);
+
         if (authToken) {
             loginPopup.style.display = 'none';
             overlay.style.display = 'none';
         } else {
+            console.log("🔒 No auth token found! Showing login popup.");
             loginPopup.style.display = 'block';
             overlay.style.display = 'block';
         }
     }
-    
-    
 
     // Handle login form submission
     loginForm.addEventListener('submit', async function (event) {
@@ -683,6 +687,8 @@ window.addEventListener('load', () => {
 
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
+
+        console.log("📝 Submitting login form...");
 
         try {
             const response = await fetch('http://localhost:5000/login', {
@@ -695,13 +701,13 @@ window.addEventListener('load', () => {
 
             if (response.ok) {
                 localStorage.setItem('authToken', data.token);
-                console.log('Login successful!');
+                console.log('✅ Login successful!');
                 checkAuth(); // Hide login popup
             } else {
-                console.error('Login failed:', data.message);
+                console.error('❌ Login failed:', data.message);
             }
         } catch (error) {
-            console.error('Error logging in:', error);
+            console.error('⚠️ Error logging in:', error);
         }
     });
 
@@ -709,7 +715,7 @@ window.addEventListener('load', () => {
     async function fetchUserData() {
         const authToken = localStorage.getItem('authToken');
         if (!authToken) {
-            console.log('You need to log in first!');
+            console.log('❌ You need to log in first!');
             return;
         }
 
@@ -721,19 +727,19 @@ window.addEventListener('load', () => {
 
             const data = await response.json();
             if (response.ok) {
-                console.log('User data:', data);
+                console.log('👤 User data:', data);
             } else {
-                console.log('Failed to fetch user data:', data.message);
+                console.log('❌ Failed to fetch user data:', data.message);
             }
         } catch (error) {
-            console.error('Error fetching user data:', error);
+            console.error('⚠️ Error fetching user data:', error);
         }
     }
 
     // Logout functionality
     logoutButton.addEventListener('click', () => {
         localStorage.removeItem('authToken');
-        console.log('Logged out!');
+        console.log('🚪 Logged out!');
         checkAuth(); // Show login popup again
     });
 
