@@ -691,7 +691,7 @@ window.addEventListener('load', () => {
         console.log("📝 Submitting login form...");
 
         try {
-            const response = await fetch('http://mpmc.ddns.net:5000/login', {
+            const response = await fetch('https://mpmc.ddns.net:5000/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
@@ -720,7 +720,7 @@ window.addEventListener('load', () => {
         }
 
         try {
-            const response = await fetch('http://mpmc.ddns.net:5000/protectedRoute', {
+            const response = await fetch('https://mpmc.ddns.net:5000/protectedRoute', {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${authToken}` },
             });
