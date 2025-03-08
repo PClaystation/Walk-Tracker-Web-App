@@ -85,32 +85,6 @@ const podcastData = [
 
 ];
 
-class Walk {
-    constructor() {
-        this.podcast;
-        this.podcastIndex;
-        this.polyline;
-        this.date;
-    }
-
-    showOnMap() {} // Shows it on the map
-    removeFromMap() {}
-}
-
-const walk = new Walk();
-
-/*
-podcastData.forEach(podcast => {
-    console.log("Adding polyline for podcast: ", podcast.name); // Debugging statement
-
-    const line = L.polyline(podcast.path, {
-        color: podcast.color,  // Use the podcast-specific color
-        weight: 5
-    }).addTo(map);
-
-    console.log("Created polyline with path: ", podcast.path); // Debugging statement
-});*/
-
 
 // Function to generate a color based on podcast name
 function getColorForPodcast(podcastName) {
