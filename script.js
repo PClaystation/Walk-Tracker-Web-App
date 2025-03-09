@@ -128,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log(`📝 Submitting ${isSignup ? 'sign-up' : 'login'} form...`);
         console.log(`Login data: ${email} ${password}`);
         
-        const endpoint = isSignup ? '/api/auth/signup' : '/api/auth/login'; // API endpoint changes based on action
+        const endpoint = isSignup ? '/api/auth/register' : '/api/auth/login'; // API endpoint changes based on action
         
         console.log(`📡 Sending request to ${endpoint}`);
         
