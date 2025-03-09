@@ -90,7 +90,7 @@ class Map {
             topographic: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
         }
 
-        this.map = L.map('map').setView([59.3293, 18.0686], 13); // Coordinates of Stockholm, Sweden for example
+        this.map = L.map('map').setView([59.3293, 18.0686], 10); // Coordinates of Stockholm, Sweden for example
         L.tileLayer(this.mapTypes.topographic).addTo(this.map);
 
         this.markers = [];
@@ -99,7 +99,9 @@ class Map {
         this.isHoveringPolyline = false;
         this.isPolylineSelected = false;
         this.selectedPolyline;
+        this.selectedWalk;
         this.visibleWalks = [];
+        this.cursorHoversMap = false;
 
         this.podcastList = podcastList;
     }
@@ -174,6 +176,29 @@ class Map {
         return distance;
     }
 
+    showTooltip(walk, color) {
+        let tooltipContent;
+    
+        if (walk.podcast !== undefined) {
+            tooltipContent = `
+                <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+                    <img src="${walk.podcast.logoUrl}" alt="${walk.podcast.name} Logo" style="max-width: 50px; max-height: 50px; margin-bottom: 10px; object-fit: contain;">
+                    <div style="font-weight: bold; color: ${color}; font-size: 14px; text-align: center;">${walk.podcast.name}</div>
+                </div>
+            `;
+        }
+        else {
+            tooltipContent = `
+                <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+                    <img src="" alt="Failed To Load" style="max-width: 50px; max-height: 50px; margin-bottom: 10px; object-fit: contain;">
+                    <div style="font-weight: bold; color: 000000; font-size: 14px; text-align: center;">Failed</div>
+                </div>
+            `;
+        }
+
+        walk.polyline.bindTooltip(tooltipContent, { permanent: false, sticky: true }).openTooltip();
+    }
+
     showWalkOnMap(walk) {
         if ("points" in walk) {
             if (walk.points === undefined) {
@@ -194,34 +219,16 @@ class Map {
         }
 
         walk.polyline = L.polyline(walk.points, { color: displayColor, weight: 4 }).addTo(this.map);
-        this.visibleWalks.push(walk);
+        this.visibleWalks.push(walk); // Clear this maybe?
 
         walk.polyline.on('mouseover', () => {this.allowMarkerPlacement = false;});
         walk.polyline.on('mouseout', () => {this.allowMarkerPlacement = true;});
         
-        
         walk.polyline.on('mouseover', () => {
-            if (walk.polyline !== this.selectedPolyline) {  // Only highlight if the polyline is not selected
-                let tooltipContent;
-    
-                if (walk.podcast !== undefined) {
-                    tooltipContent = `
-                        <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
-                            <img src="${walk.podcast.logoUrl}" alt="${walk.podcast.name} Logo" style="max-width: 50px; max-height: 50px; margin-bottom: 10px; object-fit: contain;">
-                            <div style="font-weight: bold; color: ${displayColor}; font-size: 14px; text-align: center;">${walk.podcast.name}</div>
-                        </div>
-                    `;
-                }
-                else {
-                    tooltipContent = `
-                        <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
-                            <img src="" alt="Failed To Load" style="max-width: 50px; max-height: 50px; margin-bottom: 10px; object-fit: contain;">
-                            <div style="font-weight: bold; color: 000000; font-size: 14px; text-align: center;">Failed</div>
-                        </div>
-                    `;
-                }
-    
-                walk.polyline.bindTooltip(tooltipContent, { permanent: false, sticky: true }).openTooltip();
+            if (walk !== this.selectedWalk) {  // Only highlight if the polyline is not selected
+
+                this.showTooltip(walk, displayColor);
+                
     
                 // Highlight the polyline (Change color to red on hover)
                 walk.polyline.setStyle({
@@ -235,7 +242,7 @@ class Map {
         walk.polyline.on('mouseout', () => {
             walk.polyline.closeTooltip(); // Close the tooltip
 
-            if (walk.polyline !== this.selectedPolyline) {
+            if (walk !== this.selectedWalk) {
                 walk.polyline.setStyle({
                     color: displayColor,  // Reset to original color
                     weight: 4,     // Reset to original weight
@@ -247,29 +254,17 @@ class Map {
         walk.polyline.on('click', () => {
             // Prevent the marker from being added (not using L.marker here)
             // If this polyline is already selected, we unselect it
-            if (this.selectedPolyline === walk.polyline) {
-                this.selectedPolyline.setStyle({
-                    color: displayColor,  // Reset to original color
-                    weight: 4,     // Reset to original weight
-                });
-                this.selectedPolyline = null; // Unselect it
+            if (this.selectedWalk === walk) {
+                this.deselectWalk(walk, displayColor);
             } else {
                 // Deselect the previously selected polyline
-                if (this.selectedPolyline) {
-                    this.selectedPolyline.setStyle({
-                        color: displayColor,  // Set previous selection to blue
-                        weight: 4,      // Default weight
-                    });
+                if (this.selectedWalk) {
+                    this.deselectWalk(this.selectedWalk, this.selectedWalk.podcast.color);
                 }
 
-                // Select this polyline
-                this.selectedPolyline = walk.polyline;
-                walk.polyline.setStyle({
-                    color: 'green',  // Set selected polyline to green
-                    weight: 6,       // Thicker line for selected
-                });
+                this.selectWalk(walk);
 
-                console.log("Selected polyline:", walk.polyline);
+                console.log("Selected walk:", walk);
             }
         });
     }
@@ -357,6 +352,23 @@ class Map {
             this.showExistingWalks();
         }
     }
+
+    selectWalk(walk) {
+        // Select this polyline
+        walk.polyline.setStyle({
+            color: 'green',  // Set selected polyline to green
+            weight: 6,       // Thicker line for selected
+        });
+        this.selectedWalk = walk;
+    }
+
+    deselectWalk(walk, color) {
+        walk.polyline.setStyle({
+            color: color,  // Reset to original color
+            weight: 4,     // Reset to original weight
+        });
+        this.selectedWalk = null; // Unselect it
+    }
 }
 
 const testMap = new Map(podcastData);
@@ -365,20 +377,28 @@ testMap.showExistingWalks();
 // Handling events
 
 testMap.map.on('mouseover', (event) => {
+    testMap.cursorHoversMap = true;
+
     if (event.target instanceof L.Polyline || event.target instanceof L.Polygon) {
         testMap.isHoveringPolyline = true; // The mouse is over a polyline or polygon
     }
 });
 
 testMap.map.on('mouseout', (event) => {
+    testMap.cursorHoversMap = false;
+
     if (event.target instanceof L.Polyline || event.target instanceof L.Polygon) {
         testMap.isHoveringPolyline = false; // The mouse is no longer over a polyline or polygon
     }
 });
 
 testMap.map.on('click', (event) => {
+    testMap.cursorHoversMap = true;
     testMap.placeMarker(event);
 });
+
+
+
 
 saveWalkButton.addEventListener('click', (event) => {
     const newWalk = testMap.createNewWalk();
@@ -403,9 +423,33 @@ undoButton.addEventListener('click', () => {
     testMap.undo();
 });
 
+
+
+
 document.addEventListener('keydown', (event) => {
     if ((event.ctrlKey || event.metaKey) && event.key === 'z') { 
         event.preventDefault(); // Prevents unintended browser shortcuts (e.g., undoing text input)
         testMap.undo();
     }
+
+    if (event.key === 'Backspace' || event.key === 'Delete') { // Should only be selected
+        if (testMap.selectedWalk !== null) {
+            testMap.removeWalkFromLocalStorage(testMap.selectedWalk);
+            testMap.showExistingWalks();
+        }
+    }
+});
+
+document.addEventListener('click', (event) => {
+
+    console.log(testMap.cursorHoversMap);
+
+    if (!testMap.cursorHoversMap) {
+
+        if (testMap.selectedWalk) {
+            testMap.deselectWalk(testMap.selectedWalk, testMap.selectedWalk.podcast.color);
+        }
+        
+    }
+
 });
