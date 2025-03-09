@@ -369,6 +369,21 @@ class Map {
         });
         this.selectedWalk = null; // Unselect it
     }
+
+    createSaveShowWalk() {
+        const newWalk = this.createNewWalk();
+        if (newWalk !== undefined && newWalk.podcastName !== "") {
+            console.log(newWalk);
+    
+            this.saveWalkToLocalStorage(newWalk);
+            this.showExistingWalks();
+        
+            console.log("walk!");
+        }
+        else {
+            alert("Bruh!");
+        }
+    }
 }
 
 const testMap = new Map(podcastData);
@@ -401,18 +416,7 @@ testMap.map.on('click', (event) => {
 
 
 saveWalkButton.addEventListener('click', (event) => {
-    const newWalk = testMap.createNewWalk();
-    if (newWalk !== undefined && newWalk.podcastName !== "") {
-        console.log(newWalk);
-
-        testMap.saveWalkToLocalStorage(newWalk);
-        testMap.showExistingWalks();
-    
-        console.log("walk!");
-    }
-    else {
-        alert("Bruh!");
-    }
+    testMap.createSaveShowWalk();
 });
 
 clearWalksButton.addEventListener('click', (event) => {
@@ -438,18 +442,18 @@ document.addEventListener('keydown', (event) => {
             testMap.showExistingWalks();
         }
     }
+
+    if (event.key === 'Enter') {
+        testMap.createSaveShowWalk();
+    }
 });
 
 document.addEventListener('click', (event) => {
-
     console.log(testMap.cursorHoversMap);
 
     if (!testMap.cursorHoversMap) {
-
         if (testMap.selectedWalk) {
             testMap.deselectWalk(testMap.selectedWalk, testMap.selectedWalk.podcast.color);
         }
-        
     }
-
 });
