@@ -386,7 +386,10 @@ class Map {
     }
 }
 
+
+const socket = new WebSocket("wss://mpmc.ddns.net:3000");
 const testMap = new Map(podcastData);
+
 testMap.showExistingWalks();
 
 // Handling events
@@ -456,4 +459,265 @@ document.addEventListener('click', (event) => {
             testMap.deselectWalk(testMap.selectedWalk, testMap.selectedWalk.podcast.color);
         }
     }
+});
+
+
+
+
+
+
+
+// Login/Registration Events
+
+document.addEventListener("DOMContentLoaded", () => {
+    const authForm = document.getElementById("authForm");
+    const authTitle = document.getElementById("authTitle");
+    const switchToRegisterLink = document.getElementById("switchToRegister");
+    const switchToLoginLink = document.getElementById("switchToLogin");
+    const overlay = document.getElementById("overlay");
+    const authPopup = document.getElementById("authPopup");
+
+    let isSignup = false; // Track whether the user is on the sign-up form or login form
+
+    // Show the login/signup modal on page load
+    overlay.style.display = "block"; // Show the overlay
+    authPopup.style.display = "block"; // Show the authPopup modal
+
+    // Toggle between login and sign-up
+    switchToRegisterLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        isSignup = true;
+        authTitle.textContent = "Sign Up";
+        document.getElementById("authSubmit").textContent = "Sign Up";
+        document.getElementById("registerForm").style.display = "block";
+        document.getElementById("loginForm").style.display = "none";
+    });
+
+    switchToLoginLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        isSignup = false;
+        authTitle.textContent = "Login";
+        document.getElementById("authSubmit").textContent = "Login";
+        document.getElementById("registerForm").style.display = "none";
+        document.getElementById("loginForm").style.display = "block";
+    });
+
+    // Form submission logic
+    authForm.addEventListener("submit", (e) => {
+        e.preventDefault(); // Prevent default form submission
+        
+        const email = document.getElementById("authEmail").value;
+        const password = document.getElementById("authPassword").value;
+
+        console.log(`📝 Submitting ${isSignup ? 'sign-up' : 'login'} form...`);
+        console.log(`Login data: ${email} ${password}`);
+        
+        const endpoint = isSignup ? '/api/auth/register' : '/api/auth/login'; // API endpoint changes based on action
+        
+        console.log(`📡 Sending request to ${endpoint}`);
+        
+        // Sending the request
+        fetch(`https://mpmc.ddns.net:5000${endpoint}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password,
+            }),
+        })
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error(`${isSignup ? 'Sign-up' : 'Login'} failed`);
+            }
+        })
+        .then((data) => {
+            console.log(`${isSignup ? 'Sign-up' : 'Login'} success:`, data);
+            // Hide the auth popup when the user successfully logs in or signs up
+            overlay.style.display = "none"; // Hide the overlay
+            authPopup.style.display = "none"; // Hide the popup
+            // You can redirect the user or show a success message here
+        })
+        .catch((error) => {
+            console.error(error);
+            alert(`${isSignup ? 'Sign-up' : 'Login'} failed. Please check your credentials.`);
+        });
+    });
+});
+
+socket.onopen = function() {
+    console.log("Connected to WebSocket server");
+};
+
+socket.onmessage = function(event) {
+    try {
+        let data = JSON.parse(event.data);
+        if (data.lat && data.lng) {
+            console.log("Received location:", data);
+
+            // Update marker position
+            marker.setLatLng([data.lat, data.lng]);
+
+            // Center map on new location
+            map.setView([data.lat, data.lng], 13);
+        }
+    } catch (error) {
+        console.error("Error parsing WebSocket message:", error);
+    }
+};
+
+socket.onerror = function(error) {
+    console.error("WebSocket error:", error);
+};
+
+window.addEventListener('load', () => {
+    console.log("🔥 Window loaded and script running!");
+
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const overlay = document.getElementById('overlay');
+    const authPopup = document.getElementById('authPopup');
+    const logoutButton = document.getElementById('logoutButton');
+    const showRegister = document.getElementById('showRegister');
+    const showLogin = document.getElementById('showLogin');
+
+    if (!loginForm || !registerForm || !overlay || !authPopup || !logoutButton) {
+        console.error("❌ One or more elements are missing!");
+        return;
+    }
+
+    console.log("✅ Elements found successfully!");
+
+    // Check if the user is logged in
+    function checkAuth() {
+        console.log('🔍 Checking auth status...');
+        const authToken = localStorage.getItem('authToken');  // Check if there's an authToken in localStorage
+
+        if (authToken) {
+            console.log("✅ User is logged in");
+            authPopup.style.display = 'none';  // Hide login/register popup
+            overlay.style.display = 'none';    // Hide overlay
+            logoutButton.style.display = 'block';  // Show logout button
+        } else {
+            console.log("🔒 User is not logged in");
+            authPopup.style.display = 'block';  // Show login/register popup
+            overlay.style.display = 'block';    // Show overlay
+            logoutButton.style.display = 'none'; // Hide logout button
+        }
+    }
+
+    // Handle login form submission
+    loginForm.addEventListener('submit', async function (event) {
+        event.preventDefault();  // Prevent the default form submission (reload)
+
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+
+        console.log("📝 Submitting login form...");
+
+        // Add more logging to check if form data is being captured
+        console.log("Login data: ", email, password);
+
+        try {
+            console.log('📡 Sending login request to the server...');
+            const response = await fetch('https://mpmc.ddns.net:5000/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+
+            console.log('🧐 Response received from server:', response);
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('❌ Login failed. Server responded with:', errorText);
+                return;
+            }
+
+            const data = await response.json();
+            console.log('📥 Received data:', data);
+
+            if (data.token) {
+                localStorage.setItem('authToken', data.token);
+                console.log('✅ Login successful!');
+                checkAuth();  // Run the check to update UI
+            } else {
+                console.error('❌ Token not received:', data.message);
+            }
+        } catch (error) {
+            console.error('⚠️ Error logging in:', error);
+        }
+    });
+
+    // Handle registration form submission
+    registerForm.addEventListener('submit', async function (event) {
+        event.preventDefault();  // Prevent the default form submission (reload)
+
+        const email = document.getElementById('registerEmail').value;
+        const password = document.getElementById('registerPassword').value;
+
+        console.log("📝 Submitting register form...");
+
+        // Add more logging to check if form data is being captured
+        console.log("Register data: ", email, password);
+
+        try {
+            console.log('📡 Sending registration request to the server...');
+            const response = await fetch('https://mpmc.ddns.net:5000/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+
+            console.log('🧐 Response received from server:', response);
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('❌ Registration failed. Server responded with:', errorText);
+                return;
+            }
+
+            const data = await response.json();
+            console.log('📥 Received data:', data);
+
+            if (data.token) {
+                localStorage.setItem('authToken', data.token);
+                console.log('✅ Registration successful!');
+                checkAuth();  // Run the check to update UI
+            } else {
+                console.error('❌ Token not received:', data.message);
+            }
+        } catch (error) {
+            console.error('⚠️ Error registering:', error);
+        }
+    });
+
+    // Logout functionality
+    logoutButton.addEventListener('click', () => {
+        console.log('🔐 Logging out...');
+        localStorage.removeItem('authToken');
+        console.log('🚪 Logged out!');
+        checkAuth();  // Run the check to update UI
+    });
+
+    // Switch between login and register forms
+    showRegister.addEventListener('click', () => {
+        console.log('📲 Switching to register form...');
+        loginForm.style.display = 'none';
+        registerForm.style.display = 'block';
+        console.log('Showing register form');
+    });
+
+    showLogin.addEventListener('click', () => {
+        console.log('📲 Switching to login form...');
+        registerForm.style.display = 'none';
+        loginForm.style.display = 'block';
+        console.log('Showing login form');
+    });
+
+    // Initial check for auth status
+    checkAuth();
 });

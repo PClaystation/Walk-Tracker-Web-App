@@ -34,6 +34,35 @@
     </div>
 
     <button id="clear-paths">Clear Walks</button>
+    <button id="logoutButton" style="display: none;">Logout</button>
+
+
+
+    <!-- 🔥 Login & Register Popups -->
+    <div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);"></div>
+
+    <div id="authPopup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px;">
+        <h3 id="authTitle">Login</h3>
+        
+        <!-- Login Form -->
+        <form id="authForm">
+            <label for="authEmail">Email:</label>
+            <input type="email" id="authEmail" required>
+            <label for="authPassword">Password:</label>
+            <input type="password" id="authPassword" required>
+            <button type="submit" id="authSubmit">Login</button>
+        </form>
+
+        <!-- Sign-Up Link (appears when on Login Form) -->
+        <p id="toggleAuth">Don't have an account? <a href="#" id="switchToRegister">Sign up</a></p>
+
+        <!-- Login Link (appears when on Sign-Up Form) -->
+        <p id="toggleAuthBack" style="display: none;">Already have an account? <a href="#" id="switchToLogin">Login</a></p>
+    </div>
+
+
+
+
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="script.js"></script>
