@@ -668,7 +668,6 @@ socket.onerror = function(error) {
 window.addEventListener('load', () => {
     console.log("🔥 Window loaded and script running!");
 
-    // Grab all necessary elements
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
     const overlay = document.getElementById('overlay');
@@ -704,7 +703,7 @@ window.addEventListener('load', () => {
 
     // Handle login form submission
     loginForm.addEventListener('submit', async function (event) {
-        event.preventDefault();
+        event.preventDefault();  // Prevent the default form submission (reload)
 
         const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
@@ -715,11 +714,14 @@ window.addEventListener('load', () => {
         console.log("Login data: ", email, password);
 
         try {
+            console.log('📡 Sending login request to the server...');
             const response = await fetch('https://mpmc.ddns.net:5000/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
             });
+
+            console.log('🧐 Response received from server:', response);
 
             if (!response.ok) {
                 const errorText = await response.text();
@@ -728,7 +730,7 @@ window.addEventListener('load', () => {
             }
 
             const data = await response.json();
-            console.log('Received data:', data);
+            console.log('📥 Received data:', data);
 
             if (data.token) {
                 localStorage.setItem('authToken', data.token);
@@ -744,7 +746,7 @@ window.addEventListener('load', () => {
 
     // Handle registration form submission
     registerForm.addEventListener('submit', async function (event) {
-        event.preventDefault();
+        event.preventDefault();  // Prevent the default form submission (reload)
 
         const email = document.getElementById('registerEmail').value;
         const password = document.getElementById('registerPassword').value;
@@ -755,11 +757,14 @@ window.addEventListener('load', () => {
         console.log("Register data: ", email, password);
 
         try {
+            console.log('📡 Sending registration request to the server...');
             const response = await fetch('https://mpmc.ddns.net:5000/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
             });
+
+            console.log('🧐 Response received from server:', response);
 
             if (!response.ok) {
                 const errorText = await response.text();
@@ -768,7 +773,7 @@ window.addEventListener('load', () => {
             }
 
             const data = await response.json();
-            console.log('Received data:', data);
+            console.log('📥 Received data:', data);
 
             if (data.token) {
                 localStorage.setItem('authToken', data.token);
@@ -784,6 +789,7 @@ window.addEventListener('load', () => {
 
     // Logout functionality
     logoutButton.addEventListener('click', () => {
+        console.log('🔐 Logging out...');
         localStorage.removeItem('authToken');
         console.log('🚪 Logged out!');
         checkAuth();  // Run the check to update UI
@@ -791,12 +797,14 @@ window.addEventListener('load', () => {
 
     // Switch between login and register forms
     showRegister.addEventListener('click', () => {
+        console.log('📲 Switching to register form...');
         loginForm.style.display = 'none';
         registerForm.style.display = 'block';
         console.log('Showing register form');
     });
 
     showLogin.addEventListener('click', () => {
+        console.log('📲 Switching to login form...');
         registerForm.style.display = 'none';
         loginForm.style.display = 'block';
         console.log('Showing login form');
