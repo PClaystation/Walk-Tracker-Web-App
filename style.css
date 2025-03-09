@@ -82,6 +82,14 @@ h1, h3 {
     background-color: #45a049;
 }
 
+.deleteBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: red;
+    font-size: 18px;
+    margin-left: 10px; /* Space between text and the trash can */
+}
 
 
 
@@ -114,7 +122,9 @@ h1, h3 {
 
 
 
-
+/************/
+/* History List Styling */
+/************/
 
 #walk-history {
     width: 80%;
@@ -140,6 +150,9 @@ h1, h3 {
 
 
 
+/************/
+/* Tooltip Styling */
+/************/
 
 .leaflet-tooltip {
     background-color: white;
@@ -156,15 +169,6 @@ h1, h3 {
     margin-bottom: 5px;
 }
 
-.deleteBtn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: red;
-    font-size: 18px;
-    margin-left: 10px; /* Space between text and the trash can */
-}
-
 
 
 
@@ -173,7 +177,6 @@ h1, h3 {
 /************/
 /* Auth Overlay Styling */
 /************/
-
 
 #overlay {
     display: none;
