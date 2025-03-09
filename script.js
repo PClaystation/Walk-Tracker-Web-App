@@ -90,41 +90,40 @@ document.addEventListener("DOMContentLoaded", () => {
     const authTitle = document.getElementById("authTitle");
     const switchToRegisterLink = document.getElementById("switchToRegister");
     const switchToLoginLink = document.getElementById("switchToLogin");
-    const authSubmit = document.getElementById("authSubmit");
-    const emailInput = document.getElementById("authEmail");
-    const passwordInput = document.getElementById("authPassword");
-    
+    const overlay = document.getElementById("overlay");
+    const authPopup = document.getElementById("authPopup");
+
     let isSignup = false; // Track whether the user is on the sign-up form or login form
+
+    // Show the login/signup modal on page load
+    overlay.style.display = "block"; // Show the overlay
+    authPopup.style.display = "block"; // Show the authPopup modal
 
     // Toggle between login and sign-up
     switchToRegisterLink.addEventListener("click", (e) => {
         e.preventDefault();
         isSignup = true;
         authTitle.textContent = "Sign Up";
-        authSubmit.textContent = "Sign Up";
-        clearForm(); // Clear form fields when switching
+        document.getElementById("authSubmit").textContent = "Sign Up";
+        document.getElementById("registerForm").style.display = "block";
+        document.getElementById("loginForm").style.display = "none";
     });
 
     switchToLoginLink.addEventListener("click", (e) => {
         e.preventDefault();
         isSignup = false;
         authTitle.textContent = "Login";
-        authSubmit.textContent = "Login";
-        clearForm(); // Clear form fields when switching
+        document.getElementById("authSubmit").textContent = "Login";
+        document.getElementById("registerForm").style.display = "none";
+        document.getElementById("loginForm").style.display = "block";
     });
 
     // Form submission logic
     authForm.addEventListener("submit", (e) => {
         e.preventDefault(); // Prevent default form submission
-
-        const email = emailInput.value.trim();
-        const password = passwordInput.value.trim();
-
-        // Validate form fields (basic check)
-        if (!email || !password) {
-            alert("Please fill in both email and password.");
-            return;
-        }
+        
+        const email = document.getElementById("authEmail").value;
+        const password = document.getElementById("authPassword").value;
 
         console.log(`📝 Submitting ${isSignup ? 'sign-up' : 'login'} form...`);
         console.log(`Login data: ${email} ${password}`);
@@ -132,11 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const endpoint = isSignup ? '/api/auth/signup' : '/api/auth/login'; // API endpoint changes based on action
         
         console.log(`📡 Sending request to ${endpoint}`);
-
-        // Disable the submit button to prevent multiple submissions
-        authSubmit.disabled = true;
-        authSubmit.textContent = "Submitting...";
-
+        
         // Sending the request
         fetch(`https://mpmc.ddns.net:5000${endpoint}`, {
             method: 'POST',
@@ -149,40 +144,27 @@ document.addEventListener("DOMContentLoaded", () => {
             }),
         })
         .then((response) => {
-            authSubmit.disabled = false;
-            authSubmit.textContent = isSignup ? "Sign Up" : "Login";
-
-            if (!response.ok) {
+            if (response.ok) {
+                return response.json();
+            } else {
                 throw new Error(`${isSignup ? 'Sign-up' : 'Login'} failed`);
             }
-
-            return response.json();
         })
         .then((data) => {
             console.log(`${isSignup ? 'Sign-up' : 'Login'} success:`, data);
-            
-            // Clear form fields
-            clearForm();
-            
-            // Handle success (e.g., show a success message or redirect)
-            alert(`${isSignup ? 'Sign-up' : 'Login'} successful!`);
-            
-            // Optionally, redirect or hide the authentication form
-            document.getElementById("authPopup").style.display = "none";
-            document.getElementById("overlay").style.display = "none";
+            // Hide the auth popup when the user successfully logs in or signs up
+            overlay.style.display = "none"; // Hide the overlay
+            authPopup.style.display = "none"; // Hide the popup
+            // You can redirect the user or show a success message here
         })
         .catch((error) => {
             console.error(error);
             alert(`${isSignup ? 'Sign-up' : 'Login'} failed. Please check your credentials.`);
         });
     });
-
-    // Function to clear the form fields
-    function clearForm() {
-        emailInput.value = '';
-        passwordInput.value = '';
-    }
 });
+
+
 
 
 
