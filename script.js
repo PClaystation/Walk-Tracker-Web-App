@@ -85,71 +85,71 @@ const podcastData = [
 
 ];
 
-document.addEventListener("DOMContentLoaded", () => {
-    const authForm = document.getElementById("authForm");
-    const authTitle = document.getElementById("authTitle");
-    const switchToRegisterLink = document.getElementById("switchToRegister");
-    const switchToLoginLink = document.getElementById("switchToLogin");
-    
-    let isSignup = false; // Track whether the user is on the sign-up form or login form
+// Wait for the DOM to load before attaching event listeners
+document.addEventListener("DOMContentLoaded", function() {
+    // Get references to the form and submit button
+    const loginForm = document.getElementById("authForm");
+    const loginSubmit = document.getElementById("authSubmit");
 
-    // Toggle between login and sign-up
-    switchToRegisterLink.addEventListener("click", (e) => {
-        e.preventDefault();
-        isSignup = true;
-        authTitle.textContent = "Sign Up";
-        document.getElementById("authSubmit").textContent = "Sign Up";
-    });
+    // Add a listener to handle the form submission
+    loginForm.addEventListener("submit", function(event) {
+        // Prevent default form submission (which reloads the page)
+        event.preventDefault();
 
-    switchToLoginLink.addEventListener("click", (e) => {
-        e.preventDefault();
-        isSignup = false;
-        authTitle.textContent = "Login";
-        document.getElementById("authSubmit").textContent = "Login";
-    });
-
-    // Form submission logic
-    authForm.addEventListener("submit", (e) => {
-        e.preventDefault(); // Prevent default form submission
-        
+        // Collect login data
         const email = document.getElementById("authEmail").value;
         const password = document.getElementById("authPassword").value;
 
-        console.log(`📝 Submitting ${isSignup ? 'sign-up' : 'login'} form...`);
-        console.log(`Login data: ${email} ${password}`);
-        
-        const endpoint = isSignup ? '/api/auth/signup' : '/api/auth/login'; // API endpoint changes based on action
-        
-        console.log(`📡 Sending request to ${endpoint}`);
-        
-        // Sending the request
-        fetch(`https://mpmc.ddns.net:5000${endpoint}`, {
-            method: 'POST',
+        // Displaying login data in the console for debugging
+        console.log("📝 Submitting login form...");
+        console.log("Login data:", email, password);
+
+        // Check if email and password are valid (basic check)
+        if (!email || !password) {
+            alert("Please enter both email and password.");
+            return;
+        }
+
+        // Now we send the login request to the server
+        console.log("📡 Sending login request to the server...");
+
+        fetch("https://mpmc.ddns.net:5000/api/auth/login", {
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json"
             },
             body: JSON.stringify({
                 email: email,
-                password: password,
-            }),
+                password: password
+            })
         })
-        .then((response) => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                throw new Error(`${isSignup ? 'Sign-up' : 'Login'} failed`);
+        .then(response => {
+            // Handle non-200 HTTP responses
+            if (!response.ok) {
+                throw new Error("Error logging in: " + response.statusText);
             }
+
+            return response.json();
         })
-        .then((data) => {
-            console.log(`${isSignup ? 'Sign-up' : 'Login'} success:`, data);
-            // Handle success (e.g., redirect or show success message)
+        .then(data => {
+            // Successful login response
+            console.log("✅ Login successful:", data);
+            // Hide the authentication popup
+            document.getElementById("authPopup").style.display = "none";
+            document.getElementById("overlay").style.display = "none";
+            // Optionally, store user data or token in local storage/session storage
+            localStorage.setItem("user", JSON.stringify(data));
+            // Update UI to reflect the logged-in state (e.g., show logout button)
+            document.getElementById("logoutButton").style.display = "block";
         })
-        .catch((error) => {
-            console.error(error);
-            alert(`${isSignup ? 'Sign-up' : 'Login'} failed. Please check your credentials.`);
+        .catch(error => {
+            // Handle errors
+            console.error("❌ Error logging in:", error);
+            alert("Login failed: " + error.message);
         });
     });
 });
+
 
 
 
