@@ -711,6 +711,9 @@ window.addEventListener('load', () => {
 
         console.log("📝 Submitting login form...");
 
+        // Add more logging to check if form data is being captured
+        console.log("Login data: ", email, password);
+
         try {
             const response = await fetch('https://mpmc.ddns.net:5000/api/auth/login', {
                 method: 'POST',
@@ -747,6 +750,9 @@ window.addEventListener('load', () => {
         const password = document.getElementById('registerPassword').value;
 
         console.log("📝 Submitting register form...");
+
+        // Add more logging to check if form data is being captured
+        console.log("Register data: ", email, password);
 
         try {
             const response = await fetch('https://mpmc.ddns.net:5000/api/auth/register', {
@@ -787,11 +793,13 @@ window.addEventListener('load', () => {
     showRegister.addEventListener('click', () => {
         loginForm.style.display = 'none';
         registerForm.style.display = 'block';
+        console.log('Showing register form');
     });
 
     showLogin.addEventListener('click', () => {
         registerForm.style.display = 'none';
         loginForm.style.display = 'block';
+        console.log('Showing login form');
     });
 
     // Initial check for auth status
