@@ -85,6 +85,21 @@ const podcastData = [
 
 ];
 
+document.addEventListener("DOMContentLoaded", function () {
+    const overlay = document.getElementById("overlay");
+    const authPopup = document.getElementById("authPopup");
+
+    // Check if the user is already logged in
+    const userLoggedIn = localStorage.getItem("userLoggedIn");
+
+    if (!userLoggedIn) {
+        // Force the login/register popup
+        overlay.style.display = "block";
+        authPopup.style.display = "block";
+    }
+});
+
+
 
 // Function to generate a color based on podcast name
 function getColorForPodcast(podcastName) {
@@ -653,6 +668,7 @@ socket.onerror = function(error) {
 window.addEventListener('load', () => {
     console.log("🔥 Window loaded and script running!");
 
+    // Grab all necessary elements
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
     const overlay = document.getElementById('overlay');
@@ -668,20 +684,21 @@ window.addEventListener('load', () => {
 
     console.log("✅ Elements found successfully!");
 
+    // Check if the user is logged in
     function checkAuth() {
         console.log('🔍 Checking auth status...');
-        const authToken = localStorage.getItem('authToken');
-        console.log('🔑 Auth token:', authToken);
+        const authToken = localStorage.getItem('authToken');  // Check if there's an authToken in localStorage
 
         if (authToken) {
-            authPopup.style.display = 'none';
-            overlay.style.display = 'none';
-            logoutButton.style.display = 'block';
+            console.log("✅ User is logged in");
+            authPopup.style.display = 'none';  // Hide login/register popup
+            overlay.style.display = 'none';    // Hide overlay
+            logoutButton.style.display = 'block';  // Show logout button
         } else {
-            console.log("🔒 No auth token found! Showing login popup.");
-            authPopup.style.display = 'block';
-            overlay.style.display = 'block';
-            logoutButton.style.display = 'none';
+            console.log("🔒 User is not logged in");
+            authPopup.style.display = 'block';  // Show login/register popup
+            overlay.style.display = 'block';    // Show overlay
+            logoutButton.style.display = 'none'; // Hide logout button
         }
     }
 
@@ -713,7 +730,7 @@ window.addEventListener('load', () => {
             if (data.token) {
                 localStorage.setItem('authToken', data.token);
                 console.log('✅ Login successful!');
-                checkAuth();
+                checkAuth();  // Run the check to update UI
             } else {
                 console.error('❌ Token not received:', data.message);
             }
@@ -750,7 +767,7 @@ window.addEventListener('load', () => {
             if (data.token) {
                 localStorage.setItem('authToken', data.token);
                 console.log('✅ Registration successful!');
-                checkAuth();
+                checkAuth();  // Run the check to update UI
             } else {
                 console.error('❌ Token not received:', data.message);
             }
@@ -763,7 +780,7 @@ window.addEventListener('load', () => {
     logoutButton.addEventListener('click', () => {
         localStorage.removeItem('authToken');
         console.log('🚪 Logged out!');
-        checkAuth();
+        checkAuth();  // Run the check to update UI
     });
 
     // Switch between login and register forms
@@ -777,5 +794,6 @@ window.addEventListener('load', () => {
         loginForm.style.display = 'block';
     });
 
-    checkAuth(); // Run on page load
+    // Initial check for auth status
+    checkAuth();
 });
