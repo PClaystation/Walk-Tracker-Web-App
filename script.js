@@ -85,19 +85,72 @@ const podcastData = [
 
 ];
 
-document.addEventListener("DOMContentLoaded", function () {
-    const overlay = document.getElementById("overlay");
-    const authPopup = document.getElementById("authPopup");
+document.addEventListener("DOMContentLoaded", () => {
+    const authForm = document.getElementById("authForm");
+    const authTitle = document.getElementById("authTitle");
+    const switchToRegisterLink = document.getElementById("switchToRegister");
+    const switchToLoginLink = document.getElementById("switchToLogin");
+    
+    let isSignup = false; // Track whether the user is on the sign-up form or login form
 
-    // Check if the user is already logged in
-    const userLoggedIn = localStorage.getItem("userLoggedIn");
+    // Toggle between login and sign-up
+    switchToRegisterLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        isSignup = true;
+        authTitle.textContent = "Sign Up";
+        document.getElementById("authSubmit").textContent = "Sign Up";
+    });
 
-    if (!userLoggedIn) {
-        // Force the login/register popup
-        overlay.style.display = "block";
-        authPopup.style.display = "block";
-    }
+    switchToLoginLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        isSignup = false;
+        authTitle.textContent = "Login";
+        document.getElementById("authSubmit").textContent = "Login";
+    });
+
+    // Form submission logic
+    authForm.addEventListener("submit", (e) => {
+        e.preventDefault(); // Prevent default form submission
+        
+        const email = document.getElementById("authEmail").value;
+        const password = document.getElementById("authPassword").value;
+
+        console.log(`📝 Submitting ${isSignup ? 'sign-up' : 'login'} form...`);
+        console.log(`Login data: ${email} ${password}`);
+        
+        const endpoint = isSignup ? '/api/auth/signup' : '/api/auth/login'; // API endpoint changes based on action
+        
+        console.log(`📡 Sending request to ${endpoint}`);
+        
+        // Sending the request
+        fetch(`https://mpmc.ddns.net:5000${endpoint}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password,
+            }),
+        })
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error(`${isSignup ? 'Sign-up' : 'Login'} failed`);
+            }
+        })
+        .then((data) => {
+            console.log(`${isSignup ? 'Sign-up' : 'Login'} success:`, data);
+            // Handle success (e.g., redirect or show success message)
+        })
+        .catch((error) => {
+            console.error(error);
+            alert(`${isSignup ? 'Sign-up' : 'Login'} failed. Please check your credentials.`);
+        });
+    });
 });
+
 
 
 

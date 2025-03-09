@@ -36,24 +36,18 @@
         <h3 id="authTitle">Login</h3>
         
         <!-- Login Form -->
-        <form id="loginForm">
-            <label for="loginEmail">Email:</label>
-            <input type="email" id="loginEmail" required>
-            <label for="loginPassword">Password:</label>
-            <input type="password" id="loginPassword" required>
-            <button type="submit" id="loginSubmit">Login</button>
+        <form id="authForm">
+            <label for="authEmail">Email:</label>
+            <input type="email" id="authEmail" required>
+            <label for="authPassword">Password:</label>
+            <input type="password" id="authPassword" required>
+            <button type="submit" id="authSubmit">Login</button>
         </form>
 
-        <!-- Register Form (hidden initially) -->
-        <form id="registerForm" style="display: none;">
-            <label for="registerEmail">Email:</label>
-            <input type="email" id="registerEmail" required>
-            <label for="registerPassword">Password:</label>
-            <input type="password" id="registerPassword" required>
-            <button type="submit" id="registerSubmit">Register</button>
-        </form>
-
+        <!-- Sign-Up Link (appears when on Login Form) -->
         <p id="toggleAuth">Don't have an account? <a href="#" id="switchToRegister">Sign up</a></p>
+
+        <!-- Login Link (appears when on Sign-Up Form) -->
         <p id="toggleAuthBack" style="display: none;">Already have an account? <a href="#" id="switchToLogin">Login</a></p>
     </div>
 
