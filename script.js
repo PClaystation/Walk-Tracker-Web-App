@@ -654,30 +654,34 @@ window.addEventListener('load', () => {
     console.log("🔥 Window loaded and script running!");
 
     const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
     const overlay = document.getElementById('overlay');
-    const loginPopup = document.getElementById('loginPopup');
+    const authPopup = document.getElementById('authPopup');
     const logoutButton = document.getElementById('logoutButton');
+    const showRegister = document.getElementById('showRegister');
+    const showLogin = document.getElementById('showLogin');
 
-    if (!loginForm || !overlay || !loginPopup || !logoutButton) {
+    if (!loginForm || !registerForm || !overlay || !authPopup || !logoutButton) {
         console.error("❌ One or more elements are missing!");
         return;
     }
 
     console.log("✅ Elements found successfully!");
 
-    // Function to check authentication and show/hide login popup
     function checkAuth() {
         console.log('🔍 Checking auth status...');
         const authToken = localStorage.getItem('authToken');
         console.log('🔑 Auth token:', authToken);
 
         if (authToken) {
-            loginPopup.style.display = 'none';
+            authPopup.style.display = 'none';
             overlay.style.display = 'none';
+            logoutButton.style.display = 'block';
         } else {
             console.log("🔒 No auth token found! Showing login popup.");
-            loginPopup.style.display = 'block';
+            authPopup.style.display = 'block';
             overlay.style.display = 'block';
+            logoutButton.style.display = 'none';
         }
     }
 
@@ -685,84 +689,93 @@ window.addEventListener('load', () => {
     loginForm.addEventListener('submit', async function (event) {
         event.preventDefault();
 
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
 
         console.log("📝 Submitting login form...");
 
         try {
-            console.log("Email:", email);
-            console.log("Password:", password);
-        
-            // Make the POST request to the login API
             const response = await fetch('https://mpmc.ddns.net:5000/api/auth/login', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
             });
-        
-            // Check if the response is OK (status 200-299)
+
             if (!response.ok) {
-                // Log the raw response for debugging purposes
                 const errorText = await response.text();
                 console.error('❌ Login failed. Server responded with:', errorText);
                 return;
             }
-        
-            // Parse the response JSON
+
             const data = await response.json();
             console.log('Received data:', data);
-        
+
             if (data.token) {
-                // Successfully logged in, store the token
                 localStorage.setItem('authToken', data.token);
                 console.log('✅ Login successful!');
-                checkAuth(); // Hide login popup or update the UI
+                checkAuth();
             } else {
-                // Handle case where token isn't present in response
                 console.error('❌ Token not received:', data.message);
             }
         } catch (error) {
-            // Handle and log any unexpected errors
             console.error('⚠️ Error logging in:', error);
         }
-        
     });
 
-    // Fetch protected data
-    async function fetchUserData() {
-        const authToken = localStorage.getItem('authToken');
-        if (!authToken) {
-            console.log('❌ You need to log in first!');
-            return;
-        }
+    // Handle registration form submission
+    registerForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const email = document.getElementById('registerEmail').value;
+        const password = document.getElementById('registerPassword').value;
+
+        console.log("📝 Submitting register form...");
 
         try {
-            const response = await fetch('https://mpmc.ddns.net:5000/protectedRoute', {
-                method: 'GET',
-                headers: { 'Authorization': `Bearer ${authToken}` },
+            const response = await fetch('https://mpmc.ddns.net:5000/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
             });
 
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('❌ Registration failed. Server responded with:', errorText);
+                return;
+            }
+
             const data = await response.json();
-            if (response.ok) {
-                console.log('👤 User data:', data);
+            console.log('Received data:', data);
+
+            if (data.token) {
+                localStorage.setItem('authToken', data.token);
+                console.log('✅ Registration successful!');
+                checkAuth();
             } else {
-                console.log('❌ Failed to fetch user data:', data.message);
+                console.error('❌ Token not received:', data.message);
             }
         } catch (error) {
-            console.error('⚠️ Error fetching user data:', error);
+            console.error('⚠️ Error registering:', error);
         }
-    }
+    });
 
     // Logout functionality
     logoutButton.addEventListener('click', () => {
         localStorage.removeItem('authToken');
         console.log('🚪 Logged out!');
-        checkAuth(); // Show login popup again
+        checkAuth();
+    });
+
+    // Switch between login and register forms
+    showRegister.addEventListener('click', () => {
+        loginForm.style.display = 'none';
+        registerForm.style.display = 'block';
+    });
+
+    showLogin.addEventListener('click', () => {
+        registerForm.style.display = 'none';
+        loginForm.style.display = 'block';
     });
 
     checkAuth(); // Run on page load
-    fetchUserData(); // Fetch user data on load
 });

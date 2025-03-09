@@ -134,22 +134,21 @@ h1, h3 {
     font-size: 18px;
     margin-left: 10px; /* Space between text and the trash can */
 }
-
-/* Blurred background */
+/* Overlay */
 #overlay {
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(5px);
-    display: none;
-    z-index: 10;
+    z-index: 999;
 }
 
-/* Centered login popup */
-#loginPopup {
+/* Auth Popup */
+#authPopup {
+    display: none;
     position: fixed;
     top: 50%;
     left: 50%;
@@ -157,21 +156,29 @@ h1, h3 {
     background: white;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-    display: none;
-    z-index: 20;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
 }
 
-/* Style the login form */
-#loginForm {
+/* Form */
+.auth-container form {
     display: flex;
     flex-direction: column;
-    gap: 10px;
 }
 
-/* Error message */
-#loginError {
-    color: red;
-    font-size: 14px;
-    text-align: center;
+.auth-container input {
+    margin: 5px 0;
+    padding: 8px;
+}
+
+.auth-container button {
+    margin-top: 10px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.auth-container p span {
+    color: blue;
+    cursor: pointer;
+    text-decoration: underline;
 }

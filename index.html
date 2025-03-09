@@ -29,66 +29,23 @@
     <button id="toggleTracking">Start Tracking</button>
     <button id="logoutButton">Logout</button>
 
-    <!-- 🔥 Login & Signup Popup -->
+    <!-- 🔥 Login & Register Popups -->
     <div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);"></div>
 
     <div id="authPopup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px;">
         <h3 id="authTitle">Login</h3>
         <form id="authForm">
-            <label for="email">Email:</label>
-            <input type="email" id="email" required>
-            <label for="password">Password:</label>
-            <input type="password" id="password" required>
-            <button type="submit" id="authButton">Login</button>
+            <label for="authEmail">Email:</label>
+            <input type="email" id="authEmail" required>
+            <label for="authPassword">Password:</label>
+            <input type="password" id="authPassword" required>
+            <button type="submit" id="authSubmit">Login</button>
         </form>
-        <p>
-            <span id="toggleText">Don't have an account?</span>
-            <button onclick="toggleAuthMode()">Sign Up</button>
-        </p>
+        <p id="toggleAuth">Don't have an account? <a href="#" id="switchToRegister">Sign up</a></p>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="/Walk-Tracker-Web-App/script.js"></script>
-
-    <script>
-        let isLoginMode = true;
-
-        function toggleAuthMode() {
-            isLoginMode = !isLoginMode;
-            document.getElementById("authTitle").textContent = isLoginMode ? "Login" : "Sign Up";
-            document.getElementById("authButton").textContent = isLoginMode ? "Login" : "Sign Up";
-            document.getElementById("toggleText").textContent = isLoginMode ? "Don't have an account?" : "Already have an account?";
-        }
-
-        document.getElementById("authForm").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-
-            const endpoint = isLoginMode ? "/api/auth/login" : "/api/auth/register";
-
-            try {
-                const response = await fetch(endpoint, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email, password })
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    localStorage.setItem("authToken", data.token);
-                    console.log("✅ Authentication successful!");
-                    document.getElementById("authPopup").style.display = "none";
-                    document.getElementById("overlay").style.display = "none";
-                } else {
-                    console.error("❌ Authentication failed:", data.message);
-                }
-            } catch (error) {
-                console.error("⚠️ Error:", error);
-            }
-        });
-    </script>
 
     <script>
         if ('serviceWorker' in navigator) {
