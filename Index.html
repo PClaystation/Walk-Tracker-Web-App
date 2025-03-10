@@ -35,6 +35,7 @@
 
     <button id="clear-paths">Clear Walks</button>
     <button id="toggleTracking">Start Tracking</button>
+    <button id="save-gps-walk">Save GPS Walk</button>
     <button id="logoutButton" style="display: none;">Logout</button>
 
 
@@ -59,6 +60,8 @@
 
         <!-- Login Link (appears when on Sign-Up Form) -->
         <p id="toggleAuthBack" style="display: none;">Already have an account? <a href="#" id="switchToLogin">Login</a></p>
+
+        <button id="guest-button">Guest</button>
     </div>
 
 
@@ -68,7 +71,8 @@
 
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script src=""></script>
+    <script src="storageHandler.js" type="module"></script>
+    <script src="spotifyfetch.js" type="module"></script>
     <script src="data.js" type="module"></script>
     <script src="map.js" type="module"></script>
     <script src="script.js" type="module"></script>

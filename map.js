@@ -2,7 +2,7 @@ const podcastNameInput = document.getElementById('podcast-input');
 const historyList = document.getElementById('history-list');
 
 export class Map {
-    constructor(podcastList) {
+    constructor(localStorageHandler, podcastList) {
         this.mapTypes = {
             open: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
             light: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
@@ -15,6 +15,7 @@ export class Map {
         L.tileLayer(this.mapTypes.topographic).addTo(this.map);
 
         this.markers = [];
+        this.localStorageHandler = localStorageHandler;
 
         this.allowMarkerPlacement = true;
         this.isHoveringPolyline = false;
@@ -37,7 +38,7 @@ export class Map {
 
     showExistingWalks() {
         // Retrieve walks from local storage
-        const walks = this.retrieveWalksFromLocalStorage();
+        const walks = this.localStorageHandler.retrieveWalksFromLocalStorage();
 
         // Remove all previous walks from map and list
         historyList.innerHTML = '';
@@ -84,7 +85,7 @@ export class Map {
         
         // Add delete functionality
         deleteButton.onclick = () => {
-            this.removeWalkFromLocalStorage(walk);
+            this.localStorageHandler.removeWalkFromLocalStorage(walk);
             this.showExistingWalks();
         };
     
@@ -194,14 +195,21 @@ export class Map {
         this.map.removeLayer(walk.polyline);
     }
 
-    createNewWalk() {
+    createNewWalk(pointsInput) {
         //if (podcastNameInput.value.trim() === '') {return;}
-        if (this.markers.length <= 0) {return;}
+        //if (this.markers.length <= 0) {return;}
 
+        console.log(pointsInput);
         let points = [];
-        this.markers.forEach(marker => {
-            points.push(marker.latLng);
-        });
+        if (!pointsInput) {
+            this.markers.forEach(marker => {
+                points.push(marker.latLng);
+            });
+        }
+        else {
+            points = pointsInput;
+        }
+
 
         //const walk = new Walk(this, podcastNameInput.value, points, new Date().toISOString());
 
@@ -225,28 +233,6 @@ export class Map {
         return walkObj;
     }
 
-    retrieveWalksFromLocalStorage() {
-        return JSON.parse(localStorage.getItem('walks'));
-    }
-
-    clearAll() {
-        localStorage.setItem('walks', JSON.stringify([]));
-
-        this.showExistingWalks();
-    }
-
-    saveWalkToLocalStorage(walk) {
-        let send = JSON.parse(localStorage.getItem('walks')) || [];
-        send.push(walk);
-        localStorage.setItem('walks', JSON.stringify(send));
-    }
-
-    removeWalkFromLocalStorage(walk) {
-        let walks = JSON.parse(localStorage.getItem('walks')) || [];
-        walks = walks.filter(obj => obj.id !== walk.id);
-        localStorage.setItem('walks', JSON.stringify(walks));
-    }
-
     placeMarker(event) {
         if (this.allowMarkerPlacement && !this.isHoveringPolyline && !this.isPolylineSelected) {
             const latLng = event.latlng;
@@ -266,7 +252,7 @@ export class Map {
             this.map.removeLayer(lastMarker.marker); // Remove marker from map
         }
         else {
-            const walks = this.retrieveWalksFromLocalStorage();
+            const walks = this.localStorageHandler.retrieveWalksFromLocalStorage();
             walks.pop();
             localStorage.setItem('walks', JSON.stringify(walks));
 
@@ -291,12 +277,17 @@ export class Map {
         this.selectedWalk = null; // Unselect it
     }
 
-    createSaveShowWalk() {
-        const newWalk = this.createNewWalk();
+    createSaveShowWalk(points) {
+        let newWalk;
+        if (points !== undefined) {newWalk = this.createNewWalk(points);}
+        else {newWalk = this.createNewWalk();}
+        
+        console.log(newWalk);
+
         if (newWalk !== undefined && newWalk.podcastName !== "") {
             console.log(newWalk);
     
-            this.saveWalkToLocalStorage(newWalk);
+            this.localStorageHandler.saveWalkToLocalStorage(newWalk);
             this.showExistingWalks();
         
             console.log("walk!");
