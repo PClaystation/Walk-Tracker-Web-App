@@ -4,13 +4,14 @@ const undoButton = document.getElementById('undo-btn');
 
 import { podcastData } from "./data.js";
 import { Map } from "./map.js";
+import { searchPodcast } from "./spotifyfetch.js";
 
 const socket = new WebSocket("wss://mpmc.ddns.net:3000");
 const testMap = new Map(podcastData);
 
 testMap.showExistingWalks();
 
-
+searchPodcast();
 
 // *******
 // Handling map events
