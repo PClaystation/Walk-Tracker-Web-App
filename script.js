@@ -2,6 +2,7 @@ const saveWalkButton = document.getElementById('save-walk');
 const clearWalksButton = document.getElementById('clear-paths');
 const undoButton = document.getElementById('undo-btn');
 const saveGPSWalkButton = document.getElementById('save-gps-walk');
+const guestButton = document.getElementById('guest-button');
 
 import { podcastData } from "./data.js";
 import { Map } from "./map.js";
@@ -230,6 +231,10 @@ document.getElementById('toggleTracking').addEventListener('click', toggleTracki
 // *******
 // Login/Registration Events
 // *******
+guestButton.onclick = function () {
+    overlay.style.display = "none"; // Hide the overlay
+    authPopup.style.display = "none"; // Hide the popup
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     const authForm = document.getElementById("authForm");
