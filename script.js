@@ -93,6 +93,7 @@ document.addEventListener('click', (event) => {
 
 
 
+
 // *******
 // Login/Registration Events
 // *******
@@ -176,6 +177,107 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+let tracking = false;
+let watchID = null;
+let gpsPath = []; // Temporary GPS path storage
+let gpsPolyline = null;
+let userMarker; // Store the user's location marker
+
+// Function to create or update the user marker
+const createUserMarker = (latlng) => {
+    if (!userMarker) {
+        userMarker = L.circle([latlng.lat, latlng.lng], {
+            color: 'blue',
+            fillColor: '#3388ff',
+            fillOpacity: 0.6,
+            radius: 10
+        }).addTo(testMap.map);
+    } else {
+        userMarker.setLatLng([latlng.lat, latlng.lng]); // Update the marker location
+    }
+};
+
+// Get the user's initial position for setting the marker and centering the map
+navigator.geolocation.getCurrentPosition(position => {
+    let latlng = { lat: position.coords.latitude, lng: position.coords.longitude };
+    createUserMarker(latlng); // Create the marker initially
+    testMap.map.setView(latlng, 15); // Optionally, adjust the map view to the user's location
+}, error => {
+    console.error("Error getting initial location:", error);
+});
+
+// Function to start/stop tracking
+const toggleTracking = () => {
+    if (tracking) {
+        // Stop tracking
+        if (watchID !== null) {
+            navigator.geolocation.clearWatch(watchID);
+        }
+        document.getElementById('toggleTracking').innerText = "Start Tracking";
+        alert("Tracking stopped. Now enter the podcast name and save your walk.");
+    } else {
+        // Start tracking
+        gpsPath = []; // Clear previous path
+        if (gpsPolyline) {
+            testMap.map.removeLayer(gpsPolyline); // Remove the previous polyline
+        }
+        gpsPolyline = L.polyline([], { color: 'blue' }).addTo(testMap.map);
+
+        watchID = navigator.geolocation.watchPosition(position => {
+            let latlng = { lat: position.coords.latitude, lng: position.coords.longitude };
+            gpsPath.push({ latLng: latlng });
+            gpsPolyline.addLatLng(latlng);
+            testMap.map.setView(latlng, 15); // Optionally update map view
+
+            // Update the marker location
+            createUserMarker(latlng);
+        }, error => {
+            console.error("Error getting location:", error);
+        }, { enableHighAccuracy: true });
+
+        document.getElementById('toggleTracking').innerText = "Stop Tracking";
+    }
+
+    tracking = !tracking;
+};
+
+// Save walk data when the user clicks the "Save Walk" button
+document.getElementById('save-walk').addEventListener('click', function() {    
+    // Ensure path only contains valid points
+    var validPathHistory = gpsPath.filter(function(path) {
+        return path.latLng && typeof path.latLng.lat === 'number' && typeof path.latLng.lng === 'number';
+    });
+
+    // Match podcast name with list (you need to implement podcastData)
+    let podcastMatchIndex = podcastData.findIndex(p => p.name === podcastName);
+
+    // Save walk data
+    var savedWalk = {
+        podcastIndex: podcastMatchIndex,
+        podcast: podcastName,
+        points: validPathHistory.map(path => path.latLng),
+        date: new Date().toISOString()
+    };
+
+    // Store in localStorage
+    var storedHistory = JSON.parse(localStorage.getItem('walkHistory')) || [];
+    storedHistory.push(savedWalk);
+    localStorage.setItem('walkHistory', JSON.stringify(storedHistory));
+
+    // Reset everything for the next walk
+    gpsPath = [];
+    document.getElementById('podcast-input').value = ''; 
+
+    // Update UI (implement these functions)
+    addHistoryItem(savedWalk);
+    addWalkToMap(savedWalk);
+
+    console.log("Walk saved and cleared.");
+});
+
+// Attach event to tracking button
+document.getElementById('toggleTracking').addEventListener('click', toggleTracking);
+
 socket.onopen = function() {
     console.log("Connected to WebSocket server");
 };
@@ -214,7 +316,7 @@ window.addEventListener('load', () => {
 
     if (!loginForm || !registerForm || !overlay || !authPopup || !logoutButton) {
         console.error("❌ One or more elements are missing!");
-        return;
+        
     }
 
     console.log("✅ Elements found successfully!");
