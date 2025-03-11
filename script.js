@@ -349,6 +349,6 @@ function checkAuth() {
     } else {
         overlay.style.display = "block";
         authPopup.style.display = "block";
-        logoutButton.style.display = "none";  // Hide logout button
+        logoutButton.style.display = "block";  // Hide logout button
     }
 }
