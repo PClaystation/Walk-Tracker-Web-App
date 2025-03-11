@@ -1,0 +1,9 @@
+Fix buggs
+dark mode - currently doing (charlie)
+ui layout
+settings
+fetch from spotify
+stay logged in after refresh
+gps tracking in background
+store userinfo on server and not local storage
+Publish iOS app to testflight and invte beta testers

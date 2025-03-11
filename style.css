@@ -2,24 +2,65 @@
 /* General Styling */
 /************/
 
+:root {
+
 * {
     font-family: "Rubik", sans-serif;
     font-weight: 600;
 }
+    
 
+    /* Light Mode Colors */
+    --bg-color: #f4f4f4;
+    --text-color: #333;
+    --card-bg: #fff;
+    --button-bg: #4CAF50;
+    --button-hover-bg: #45a049;
+    --danger-bg: #f44336;
+    --danger-hover-bg: #e53935;
+    --input-bg: rgb(241, 241, 241);
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --bg-gradient: linear-gradient(to bottom, #ffffff, #cfcfcf);
+    --place_holder_color: #333;
+}
+
+.dark-mode {
+    /* Dark Mode Colors */
+    --bg-color: #646464;
+    --text-color: #e0e0e0;
+    --card-bg: #7b7b7b;
+    --button-bg: #357a38;
+    --button-hover-bg: #2e6b32;
+    --danger-bg: #d32f2f;
+    --danger-hover-bg: #b71c1c;
+    --input-bg: #6c6c6c;
+    --shadow-color: rgba(0, 0, 0, 0.146);
+    --bg-gradient: linear-gradient(to bottom, #1e1e1e, #555555);
+    --place_holder_color: #e0e0e0;
+
+}
+
+/* Apply Variables */
 body {
     font-weight: 400;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    background: var(--bg-gradient); /* Use background instead of background-color */
+    color: var(--text-color);
+    background-attachment: fixed; /* Optional: Keeps the gradient in place when scrolling */
 }
+
 
 h1, h3 {
     text-align: center;
-    color: #333;
+    color: var(--text-color);
 }
 
-
+#podcast-input::placeholder {
+    font-weight: bold;
+    opacity: 0.5;
+    color: var(--place-holder-color);
+  }
 
 /************/
 /* Map Styling */
@@ -28,11 +69,8 @@ h1, h3 {
 #map {
     width: 100%;
     height: 55vh;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 5px var(--shadow-color);
 }
-
-
-
 
 /************/
 /* Buttons Styling */
@@ -44,21 +82,21 @@ h1, h3 {
     height: 40px;
     border: none;
     outline: none;
-    background-color: white;
+    background-color: var(--card-bg);
     border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 5px var(--shadow-color);
     cursor: pointer;
 }
 
 #undo-btn:hover {
-    background-color: rgb(248, 248, 248);
+    background-color: var(--input-bg);
 }
 
 #clear-paths {
     display: block;
     margin: 20px auto;
     padding: 10px 20px;
-    background-color: #f44336;
+    background-color: var(--danger-bg);
     color: white;
     border: none;
     border-radius: 5px;
@@ -66,20 +104,20 @@ h1, h3 {
 }
 
 #clear-paths:hover {
-    background-color: #e53935;
+    background-color: var(--danger-hover-bg);
 }
 
 #save-walk {
     padding: 10px 15px;
     cursor: pointer;
-    background-color: #4CAF50;
+    background-color: var(--button-bg);
     color: white;
     border: none;
     border-radius: 5px;
 }
 
 #save-walk:hover {
-    background-color: #45a049;
+    background-color: var(--button-hover-bg);
 }
 
 .deleteBtn {
@@ -88,10 +126,8 @@ h1, h3 {
     cursor: pointer;
     color: red;
     font-size: 18px;
-    margin-left: 10px; /* Space between text and the trash can */
+    margin-left: 10px;
 }
-
-
 
 /************/
 /* Inputs Styling */
@@ -100,10 +136,10 @@ h1, h3 {
 .input-container {
     width: 80%;
     margin: 20px auto;
-    background-color: #fff;
+    background-color: var(--card-bg);
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 5px var(--shadow-color);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -116,11 +152,10 @@ h1, h3 {
     margin-right: 10px;
     margin-left: 10px;
     border: none;
-    background: rgb(241, 241, 241);
+    background: var(--input-bg);
     border-radius: 5px;
+    color: var(--text-color);
 }
-
-
 
 /************/
 /* History List Styling */
@@ -129,10 +164,10 @@ h1, h3 {
 #walk-history {
     width: 80%;
     margin: 20px auto;
-    background-color: #fff;
+    background-color: var(--card-bg);
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 5px var(--shadow-color);
 }
 
 #history-list {
@@ -142,24 +177,23 @@ h1, h3 {
 
 #history-list li {
     padding: 10px;
-    background-color: #f9f9f9;
+    background-color: var(--input-bg);
     margin: 5px 0;
     border-radius: 5px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 2px var(--shadow-color);
 }
-
-
 
 /************/
 /* Tooltip Styling */
 /************/
 
 .leaflet-tooltip {
-    background-color: white;
+    background-color: var(--card-bg);
     border-radius: 5px;
     padding: 10px;
     font-size: 14px;
     max-width: 200px;
+    color: var(--text-color);
 }
 
 .leaflet-tooltip img {
@@ -168,11 +202,6 @@ h1, h3 {
     object-fit: cover;
     margin-bottom: 5px;
 }
-
-
-
-
-
 
 /************/
 /* Auth Overlay Styling */
@@ -196,32 +225,10 @@ h1, h3 {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: white;
+    background: var(--card-bg);
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 10px var(--shadow-color);
     z-index: 1000;
-}
-
-/* Form */
-.auth-container form {
-    display: flex;
-    flex-direction: column;
-}
-
-.auth-container input {
-    margin: 5px 0;
-    padding: 8px;
-}
-
-.auth-container button {
-    margin-top: 10px;
-    padding: 10px;
-    cursor: pointer;
-}
-
-.auth-container p span {
-    color: blue;
-    cursor: pointer;
-    text-decoration: underline;
+    color: var(--text-color);
 }

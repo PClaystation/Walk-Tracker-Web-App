@@ -10,6 +10,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="icon" type="image/x-icon" href="icons/dark mode icon.png">
     <link href="https://fonts.googleapis.com/css2?family=Concert+One&family=Nerko+One&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -37,6 +38,8 @@
     <button id="toggleTracking">Start Tracking</button>
     <button id="save-gps-walk">Save GPS Walk</button>
     <button id="logoutButton" style="display: none;">Logout</button>
+    <button id="dark-mode-toggle">Toggle Dark Mode</button>
+
 
 
 
@@ -80,7 +83,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/Walk-Tracker-Web-App/service-worker.js')
+                navigator.serviceWorker.register('service-worker.js')
                 .then((registration) => {
                     console.log('Service Worker registered with scope:', registration.scope);
                 })

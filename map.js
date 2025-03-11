@@ -5,6 +5,7 @@ export class Map {
     constructor(localStorageHandler, podcastList) {
         this.mapTypes = {
             open: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            darkMapLayer: 'https://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.png',
             light: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
             dark: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
             satelite: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
@@ -27,6 +28,18 @@ export class Map {
         this.sessionActions = [];
 
         this.podcastList = podcastList;
+    }
+
+    changeMapType(mapType) {
+        // Remove the existing tile layer
+        this.map.eachLayer(layer => {
+            if (layer instanceof L.TileLayer) {
+                this.map.removeLayer(layer);
+            }
+        });
+
+        // Add the new tile layer based on the passed mapType
+        L.tileLayer(this.mapTypes[mapType]).addTo(this.map);
     }
 
     findMatchingPodcastIndex(podcastName) {
