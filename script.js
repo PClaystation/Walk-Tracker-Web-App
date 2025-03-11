@@ -256,8 +256,8 @@ document.addEventListener("DOMContentLoaded", () => {
         isSignup = true;
         authTitle.textContent = "Sign Up";
         document.getElementById("authSubmit").textContent = "Sign Up";
-        document.getElementById("registerForm").style.display = "block";
-        document.getElementById("loginForm").style.display = "none";
+        //document.getElementById("registerForm").style.display = "block";
+        //document.getElementById("loginForm").style.display = "none";
     });
 
     switchToLoginLink.addEventListener("click", (e) => {
@@ -265,8 +265,8 @@ document.addEventListener("DOMContentLoaded", () => {
         isSignup = false;
         authTitle.textContent = "Login";
         document.getElementById("authSubmit").textContent = "Login";
-        document.getElementById("registerForm").style.display = "none";
-        document.getElementById("loginForm").style.display = "block";
+        //document.getElementById("registerForm").style.display = "none";
+        //document.getElementById("loginForm").style.display = "block";
     });
 
     // Form submission logic
@@ -348,12 +348,12 @@ window.addEventListener('load', () => {
     const overlay = document.getElementById('overlay');
     const authPopup = document.getElementById('authPopup');
     const logoutButton = document.getElementById('logoutButton');
-    const showRegister = document.getElementById('showRegister');
-    const showLogin = document.getElementById('showLogin');
+    const showRegister = document.getElementById('switchToRegister');
+    const showLogin = document.getElementById('switchToLogin');
 
-    if (!loginForm || !registerForm || !overlay || !authPopup || !logoutButton) {
+    if (!overlay || !authPopup || !logoutButton) {
         console.error("❌ One or more elements are missing!");
-        
+        return;
     }
 
     console.log("✅ Elements found successfully!");
@@ -471,7 +471,7 @@ window.addEventListener('load', () => {
         console.log('🚪 Logged out!');
         checkAuth();  // Run the check to update UI
     });
-
+    /*
     // Switch between login and register forms
     showRegister.addEventListener('click', () => {
         console.log('📲 Switching to register form...');
@@ -486,6 +486,7 @@ window.addEventListener('load', () => {
         loginForm.style.display = 'block';
         console.log('Showing login form');
     });
+    */
 
     // Initial check for auth status
     checkAuth();

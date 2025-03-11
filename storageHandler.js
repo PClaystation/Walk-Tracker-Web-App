@@ -14,7 +14,14 @@ export class LocalStorageHandler {
     }
 
     retrieveWalksFromLocalStorage() {
-        return JSON.parse(localStorage.getItem('walks'));
+        const walks = JSON.parse(localStorage.getItem('walks'));
+
+        if (JSON.parse(localStorage.getItem('walks')) !== null) {
+            return walks;
+        }
+        else {
+            return [];
+        }
     }
 
     clearLocalStorage() {
