@@ -279,8 +279,8 @@ document.addEventListener("DOMContentLoaded", () => {
         isSignup = true;
         authTitle.textContent = "Sign Up";
         document.getElementById("authSubmit").textContent = "Sign Up";
-        document.getElementById("registerForm").style.display = "block";
-        document.getElementById("loginForm").style.display = "none";
+        //document.getElementById("registerForm").style.display = "block";
+        //document.getElementById("loginForm").style.display = "none";
     });
 
     // Switch to login view
@@ -289,8 +289,8 @@ document.addEventListener("DOMContentLoaded", () => {
         isSignup = false;
         authTitle.textContent = "Login";
         document.getElementById("authSubmit").textContent = "Login";
-        document.getElementById("registerForm").style.display = "none";
-        document.getElementById("loginForm").style.display = "block";
+        //document.getElementById("registerForm").style.display = "none";
+        //document.getElementById("loginForm").style.display = "block";
     });
 
     // Form submission logic
