@@ -15,12 +15,10 @@ const localStorageHandler = new LocalStorageHandler();
 const testMap = new Map(localStorageHandler, podcastData);
 
 console.log(localStorageHandler.retrieveWalksFromLocalStorage());
-// testMap.showExistingWalks();
+testMap.showExistingWalks();
 
 
 searchPodcast();
-
-
 
 
 // *******

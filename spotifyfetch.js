@@ -33,17 +33,18 @@ async function getPodcastCover(podcastName) {
     }
 }
 
-export async function searchPodcast() {
+export async function searchPodcast(podcastName) {
     //const podcastName = document.getElementById("podcastName").value;
-    const coverImage = await getPodcastCover("Derelict");
+    const coverImage = await getPodcastCover(podcastName);
 
     if (coverImage) {
-        console.log(coverImage);
+        return coverImage;
 
         /*
         document.getElementById("coverImage").src = coverImage;
         document.getElementById("coverImage").style.display = "block";*/
     } else {
         alert("No podcast cover found.");
+        return "";
     }
 }

@@ -1,3 +1,5 @@
+import { searchPodcast } from "./spotifyfetch.js";
+
 const podcastNameInput = document.getElementById('podcast-input');
 const historyList = document.getElementById('history-list');
 
@@ -115,11 +117,11 @@ export class Map {
     showTooltip(walk, color) {
         let tooltipContent;
     
-        if (walk.podcast !== undefined) {
+        if (walk.podcastFetchAdress !== undefined) {
             tooltipContent = `
                 <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
-                    <img src="${walk.podcast.logoUrl}" alt="${walk.podcast.name} Logo" style="max-width: 50px; max-height: 50px; margin-bottom: 10px; object-fit: contain;">
-                    <div style="font-weight: bold; color: ${color}; font-size: 14px; text-align: center;">${walk.podcast.name}</div>
+                    <img src="${walk.podcastFetchAdress}" alt="${walk.podcastName} Logo" style="max-width: 50px; max-height: 50px; margin-bottom: 10px; object-fit: contain;">
+                    <div style="font-weight: bold; color: ${color}; font-size: 14px; text-align: center;">${walk.podcastName}</div>
                 </div>
             `;
         }
@@ -151,7 +153,7 @@ export class Map {
             displayColor = walk.podcast.color;
         }
         else {
-            displayColor = '#FFFFFF';
+            displayColor = '#000000';
         }
 
         walk.polyline = L.polyline(walk.points, { color: displayColor, weight: 4 }).addTo(this.map);
@@ -162,7 +164,6 @@ export class Map {
         
         walk.polyline.on('mouseover', () => {
             if (walk !== this.selectedWalk) {  // Only highlight if the polyline is not selected
-
                 this.showTooltip(walk, displayColor);
                 
     
@@ -209,7 +210,7 @@ export class Map {
         this.map.removeLayer(walk.polyline);
     }
 
-    createNewWalk(pointsInput) {
+    async createNewWalk(pointsInput) {
         //if (podcastNameInput.value.trim() === '') {return;}
         //if (this.markers.length <= 0) {return;}
 
@@ -224,7 +225,6 @@ export class Map {
             points = pointsInput;
         }
 
-
         //const walk = new Walk(this, podcastNameInput.value, points, new Date().toISOString());
 
         const walkObj = {
@@ -232,6 +232,7 @@ export class Map {
             podcastName: podcastNameInput.value,
             podcastIndex: this.findMatchingPodcastIndex(podcastNameInput.value),
             podcast: this.podcastList[this.findMatchingPodcastIndex(podcastNameInput.value)],
+            podcastFetchAdress: await searchPodcast(podcastNameInput.value),
             points: points,
             date: new Date().toISOString(),
             polyline: null
@@ -305,10 +306,12 @@ export class Map {
         this.selectedWalk = null; // Unselect it
     }
 
-    createSaveShowWalk(points) {
+    async createSaveShowWalk(points) {
+
+
         let newWalk;
-        if (points !== undefined) {newWalk = this.createNewWalk(points);}
-        else {newWalk = this.createNewWalk();}
+        if (points !== undefined) {newWalk = await this.createNewWalk(points);}
+        else {newWalk = await this.createNewWalk();}
         
         console.log(newWalk);
 

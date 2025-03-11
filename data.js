@@ -8,7 +8,7 @@ export const podcastData = [
     {
         name: 'Derelict',
         color: '#0a00d7',
-        logoUrl: 'Images/Derelict.jpeg',  // Replace with the actual logo URL
+        logoUrl: '',  // Replace with the actual logo URL
         path: []
     },
     {
