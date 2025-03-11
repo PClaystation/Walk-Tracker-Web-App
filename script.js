@@ -3,6 +3,7 @@ const clearWalksButton = document.getElementById('clear-paths');
 const undoButton = document.getElementById('undo-btn');
 const saveGPSWalkButton = document.getElementById('save-gps-walk');
 const guestButton = document.getElementById('guest-button');
+const podcastNameInput = document.getElementById('podcast-input');
 
 import { podcastData } from "./data.js";
 import { Map } from "./map.js";
@@ -92,7 +93,9 @@ document.addEventListener('keydown', (event) => {
     }
 
     if (event.key === 'Enter') {
-        testMap.createSaveShowWalk();
+        if (document.activeElement === podcastNameInput) {
+            testMap.createSaveShowWalk();
+        }
     }
 });
 

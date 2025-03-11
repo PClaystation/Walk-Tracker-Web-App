@@ -12,7 +12,7 @@ export class Map {
         }
 
         this.map = L.map('map').setView([59.3293, 18.0686], 10); // Coordinates of Stockholm, Sweden for example
-        L.tileLayer(this.mapTypes.topographic).addTo(this.map);
+        L.tileLayer(this.mapTypes.open).addTo(this.map);
 
         this.markers = [];
         this.localStorageHandler = localStorageHandler;
@@ -24,6 +24,7 @@ export class Map {
         this.selectedWalk;
         this.visibleWalks = [];
         this.cursorHoversMap = false;
+        this.sessionActions = [];
 
         this.podcastList = podcastList;
     }
@@ -229,6 +230,7 @@ export class Map {
 
         podcastNameInput.value = '';
         this.markers = [];
+        this.sessionActions.push("created walk");
 
         return walkObj;
     }
@@ -244,19 +246,32 @@ export class Map {
 
             console.log(event.latlng);
         }
+
+        this.sessionActions.push("placed marker");
     }
 
     undo() {
-        if (this.markers.length > 0) {
-            let lastMarker = this.markers.pop(); // Remove last marker from array
-            this.map.removeLayer(lastMarker.marker); // Remove marker from map
-        }
-        else {
-            const walks = this.localStorageHandler.retrieveWalksFromLocalStorage();
-            walks.pop();
-            localStorage.setItem('walks', JSON.stringify(walks));
+        if (this.sessionActions.length <= 0) return;
 
-            this.showExistingWalks();
+
+        const lastAction = this.sessionActions[this.sessionActions.length-1];
+
+        if (lastAction === "placed marker") {
+            if (this.markers.length > 0) {
+                let lastMarker = this.markers.pop(); // Remove last marker from array
+                this.map.removeLayer(lastMarker.marker); // Remove marker from map
+                this.sessionActions.pop();
+            }
+        }   
+        else if (lastAction === "created walk"){
+            if (confirm("Are you sure that want to remove a walk?")) {
+                const walks = this.localStorageHandler.retrieveWalksFromLocalStorage();
+                walks.pop();
+                localStorage.setItem('walks', JSON.stringify(walks));
+    
+                this.showExistingWalks();
+                this.sessionActions.pop();
+            }
         }
     }
 
