@@ -169,7 +169,14 @@ const toggleTracking = () => {
         // Stop tracking
         if (watchID !== null) {
             navigator.geolocation.clearWatch(watchID);
+            watchID = null; // Reset watchID
         }
+
+        // Notify iOS to stop tracking if available
+        if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.stopTracking) {
+            window.webkit.messageHandlers.stopTracking.postMessage(null);
+        }
+
         document.getElementById('toggleTracking').innerText = "Start Tracking";
         alert("Tracking stopped. Now enter the podcast name and save your walk.");
     } else {
@@ -180,23 +187,33 @@ const toggleTracking = () => {
         }
         gpsPolyline = L.polyline([], { color: 'blue' }).addTo(testMap.map);
 
-        watchID = navigator.geolocation.watchPosition(position => {
-            let latlng = { lat: position.coords.latitude, lng: position.coords.longitude };
-            gpsPath.push({ latLng: latlng });
-            gpsPolyline.addLatLng(latlng);
-            testMap.map.setView(latlng, 15); // Optionally update map view
+        // Check if iOS is available
+        if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.startTracking) {
+            window.webkit.messageHandlers.startTracking.postMessage(null);
+        } else {
+            // If no iOS app, track using JS (for laptops or web-only use)
+            watchID = navigator.geolocation.watchPosition(position => {
+                let latlng = { lat: position.coords.latitude, lng: position.coords.longitude };
+                gpsPath.push({ latLng: latlng });
+                gpsPolyline.addLatLng(latlng);
+                testMap.map.setView(latlng, 15);
 
-            // Update the marker location
-            createUserMarker(latlng);
-        }, error => {
-            console.error("Error getting location:", error);
-        }, { enableHighAccuracy: true });
+                createUserMarker(latlng);
+            }, error => {
+                console.error("Error getting location:", error);
+            }, { enableHighAccuracy: true });
+
+            console.log("Tracking started via JavaScript.");
+        }
 
         document.getElementById('toggleTracking').innerText = "Stop Tracking";
     }
 
     tracking = !tracking;
 };
+
+
+
 
 // Save walk data when the user clicks the "Save Walk" button
 saveGPSWalkButton.addEventListener('click', function() {    
