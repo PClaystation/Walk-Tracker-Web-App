@@ -5,6 +5,10 @@ const saveGPSWalkButton = document.getElementById('save-gps-walk');
 const guestButton = document.getElementById('guest-button');
 const podcastNameInput = document.getElementById('podcast-input');
 
+const settingsButton = document.getElementById('settings-button');
+const settingsPopup = document.getElementById('settings-popup');
+const exitSettingsButton = document.getElementById('exit-settings-button');
+
 import { podcastData } from "./data.js";
 import { Map } from "./map.js";
 import { searchPodcast } from "./spotifyfetch.js";
@@ -106,6 +110,21 @@ document.addEventListener('click', (event) => {
         }
     }
 });
+
+
+// *******
+// Settings Events
+// *******
+
+settingsButton.onclick = function () {
+    console.log("click")
+    settingsPopup.style.display = 'flex';
+}
+
+exitSettingsButton.onclick = function () {
+    settingsPopup.style.display =  'none';
+}
+
 
 
 
@@ -270,7 +289,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Show login popup
     overlay.style.display = "block";
-    authPopup.style.display = "block";
+    authPopup.style.display = "flex";
 
     let isSignup = false;
 
@@ -348,7 +367,7 @@ function checkAuth() {
         logoutButton.style.display = "block";  // Show logout button
     } else {
         overlay.style.display = "block";
-        authPopup.style.display = "block";
+        authPopup.style.display = "flex";
         logoutButton.style.display = "block";  // Hide logout button
     }
 }

@@ -23,6 +23,8 @@
     --bg-gradient: linear-gradient(to bottom, #ffffff, #cfcfcf);
     --place_holder_color: #333;
     --border-radius: 5px;
+    --default-button-color: #fff;
+    --default-button-hover-color: #ececec;
 }
 
 .dark-mode {
@@ -38,6 +40,8 @@
     --shadow-color: rgba(0, 0, 0, 0.146);
     --bg-gradient: linear-gradient(to bottom, #1e1e1e, #555555);
     --place-holder-color: #e0e0e0;
+    --default-button-color: #7b7b7b;
+    --default-button-hover-color: #626262;
 }
 
 /* Apply Variables */
@@ -56,15 +60,40 @@ h1, h3 {
     color: var(--text-color);
 }
 
+input {
+    all: unset;
+    border: none;
+    background-color: var(--input-bg) !important;
+    border-radius: 5px;
+    color: var(--text-color) !important;
+    appearance: none !important; /* "unset" might not work as expected */
+    height: 30px;
+    font-family: "Rubik", sans-serif !important;
+}
+
+/* Force autofill fields to match your background */
+
+
+/* Override internal autofill selection */
+input:-internal-autofill-selected {
+    box-shadow: 0 0 0px 1000px var(--input-bg) inset !important;
+    -webkit-text-fill-color: var(--text-color) !important;
+    font-family: "Rubik", sans-serif !important;
+}
+
 button {
     outline: none;
     border: none;
     color: var(--text-color);
-    background-color: var(--card-bg);
+    background-color: var(--default-button-color);
     border-radius: var(--border-radius);
     cursor: pointer;
     box-shadow: 0 2px 5px var(--shadow-color);
     padding: 7px;
+}
+
+button:hover {
+    background-color: var(--default-button-hover-color);
 }
 
 .wrapper {
@@ -73,7 +102,7 @@ button {
 
     display: grid;
 
-    grid-template-columns: 1fr 200px;
+    grid-template-columns: 1fr;
     grid-template-rows: 45vh 1fr;
 }
 
@@ -84,16 +113,18 @@ button {
     overflow: auto;
 }
 
-.settings-wrapper {
-    grid-row: 1/3;
-    grid-column: 2/3;
-
-    display: flex;
-    flex-direction: column;
-}
-
-.settings-wrapper button {
-    margin: 10px;
+.popup-menu {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--bg-color);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px var(--shadow-color);
+    z-index: 1000;
+    color: var(--text-color);
 }
 
 
@@ -109,7 +140,44 @@ button {
 .tracking-container button {
     margin-left: 10px;
     margin-right: 10px;
+    margin-top: 15px;
 }
+
+
+
+
+
+/************/
+/* Settings Styling */
+/************/
+
+#exit-settings-button {
+    width: 30px;
+    height: 30px; 
+    position: fixed;
+    top: 3px;
+    left: 13px;
+}
+
+#logoutButton {
+    background-color: var(--danger-bg);
+}
+#logoutButton:hover {
+    background-color: var(--danger-hover-bg);
+}
+
+.settings-wrapper {
+    height: 80vh;
+    width: 70vw;
+
+    display: none;
+    flex-direction: column;
+}
+
+.settings-wrapper button {
+    margin-top: 10px;
+}
+
 
 
 
@@ -132,17 +200,24 @@ button {
 /* Buttons Styling */
 /************/
 
-#undo-btn {
-    margin: 10px;
+.left-bar {
+    position: absolute;
+
+    margin-top: 0px;
+
+    width: 60px;
+    height: 200px;
+
+
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+}
+.left-bar button{
+    position: relative;
+    margin-top: 10px;
     width: 40px;
     height: 40px;
-    background-color: var(--card-bg);
-
-    box-shadow: 0 2px 5px var(--shadow-color);
-}
-
-#undo-btn:hover {
-    background-color: var(--input-bg);
 }
 
 #clear-paths {
@@ -213,10 +288,6 @@ button {
     padding: 8px;
     margin-right: 10px;
     margin-left: 10px;
-    border: none;
-    background: var(--input-bg);
-    border-radius: 5px;
-    color: var(--text-color);
 }
 
 
@@ -291,15 +362,7 @@ button {
 
 /* Auth Popup */
 #authPopup {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: var(--bg-color);
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px var(--shadow-color);
-    z-index: 1000;
-    color: var(--text-color);
+    flex-direction: column;
+
+
 }
