@@ -14,18 +14,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Concert+One&family=Nerko+One&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="map"></div>
+    <div class="wrapper">
+        <div id="map"></div>
 
-    <button id="undo-btn">
-        <img src="./icons/undo-circular-arrow.png" width="20px" height="20px">
-    </button>
-    
-    <!-- Move the input and save button above the history -->
-    <div class="input-container">
-        <label for="podcast-input">Podcast Name: </label>
-        <input type="text" id="podcast-input" placeholder="Enter Podcast Name...">
-        <button id="save-walk">Save Walk</button>
-    </div>
+        <div class="settings-wrapper">
+            <button id="dark-mode-toggle">Toggle Dark Mode</button>
+            <button id="logoutButton" style="display: block;">Logout</button>
+        </div>
 
     <div id="walk-history">
         <h3>Walk History</h3>
@@ -50,32 +45,40 @@
 
     <div id="authPopup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px;">
         <h3 id="authTitle">Login</h3>
+        <div class="workarea-wrapper">
+            <button id="undo-btn">
+                <img src="./icons/undo-circular-arrow.png" width="20px" height="20px">
+            </button>
+            
+            <div class="tracking-container">
+                <button id="toggleTracking">Start Tracking</button>
+                <button id="save-gps-walk">Save GPS Walk</button>
+            </div>
         
-        <!-- Login Form -->
-        <form id="authForm">
-            <label for="authEmail">Email:</label>
-            <input type="email" id="authEmail" required>
-            <label for="authPassword">Password:</label>
-            <input type="password" id="authPassword" required>
-            <button type="submit" id="authSubmit">Login</button>
-        </form>
+            <!-- Move the input and save button above the history -->
+            <div class="input-container">
+                <label for="podcast-input">Podcast Name: </label>
+                <input type="text" id="podcast-input" placeholder="Enter Podcast Name...">
+                <button id="save-walk">Save Walk</button>
+            </div>
+        
+            <div id="walk-history">
+                <h3>Walk History</h3>
+                <ul id="history-list">
+                    <!-- Walk history will appear here -->
+                </ul>
+            </div>
+        
+            <button id="clear-paths">Clear Walks</button>
+        </div>
 
-        <!-- Sign-Up Link (appears when on Login Form) -->
-        <p id="toggleAuth">Don't have an account? <a href="#" id="switchToRegister">Sign up</a></p>
+        
 
-        <!-- Login Link (appears when on Sign-Up Form) -->
-        <p id="toggleAuthBack" style="display: none;">Already have an account? <a href="#" id="switchToLogin">Login</a></p>
 
         <button id="guest-button">Guest</button>
         
     </div>
-
-
-
-
-
-
-
+    
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="storageHandler.js" type="module"></script>
     <script src="spotifyfetch.js" type="module"></script>
