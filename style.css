@@ -232,3 +232,107 @@ h1, h3 {
     z-index: 1000;
     color: var(--text-color);
 }
+
+/************/
+/* Privacy Policy Page */
+/************/
+.privacy-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.privacy-container h1 {
+    text-align: center;
+    color: #007bff;
+    margin-bottom: 10px;
+}
+
+.privacy-container h2 {
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 5px;
+    margin-top: 30px;
+}
+
+.privacy-container h3 {
+    color: #0056b3;
+    margin-top: 20px;
+}
+
+.privacy-container p {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+.privacy-container ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.privacy-container ul li {
+    background: #f8f9fa;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-left: 4px solid #007bff;
+}
+
+.privacy-container a {
+    color: #007bff;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.privacy-container a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .privacy-container {
+        width: 90%;
+        padding: 15px;
+    }
+}
+
+
+/************/
+/* Cookies popup */
+/************/
+.cookie-popup {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 400px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 14px;
+    display: none; /* Hidden by default */
+}
+
+.cookie-popup a {
+    color: #ababab;
+    text-decoration: underline;
+}
+
+.cookie-popup button {
+    margin-top: 10px;
+    background: #ffffff;
+    color: black;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.cookie-popup button:hover {
+    background: #bcbcbc;
+}

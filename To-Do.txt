@@ -12,3 +12,5 @@ doing:
 dark mode (charlie)
 
 done:
+Make privacy policy
+Make cookies banner/alert

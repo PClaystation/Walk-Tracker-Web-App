@@ -39,6 +39,8 @@
     <button id="save-gps-walk">Save GPS Walk</button>
     <button id="logoutButton" style="display: none;">Logout</button>
     <button id="dark-mode-toggle">Toggle Dark Mode</button>
+    <a href="/privacy-policy.html">Privacy Policy</a>
+
 
 
 
@@ -65,6 +67,7 @@
         <p id="toggleAuthBack" style="display: none;">Already have an account? <a href="#" id="switchToLogin">Login</a></p>
 
         <button id="guest-button">Guest</button>
+        
     </div>
 
 
@@ -79,6 +82,8 @@
     <script src="data.js" type="module"></script>
     <script src="map.js" type="module"></script>
     <script src="script.js" type="module"></script>
+    <script src="cookies.js" type="module"></script>
+
 
     <script>
         if ('serviceWorker' in navigator) {
@@ -101,5 +106,13 @@
             }
         }
     </script>
+
+    <div id="cookie-popup" class="cookie-popup">
+        <p>We use cookies to improve your experience. By continuing to use this site, you accept our <a href="privacy-policy.html">Privacy Policy</a>.</p>
+        <button id="accept-cookies">Accept</button>
+    </div>
+
+    <script src="cookies.js"></script>
+
 </body>
 </html>
