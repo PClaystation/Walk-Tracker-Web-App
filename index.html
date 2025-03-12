@@ -23,6 +23,14 @@
             
             <button id="dark-mode-toggle">Toggle Dark Mode</button>
             <button id="logoutButton" style="display: block;">Logout</button>
+            <button id="privacy-policy-button">Privacy Policy</button>
+
+            <script>
+                document.getElementById('privacy-policy-button').addEventListener('click', function() {
+                    window.location.href = 'privacy-policy.html';  // Link to your privacy policy page
+                });
+            </script>
+            
         </div>
 
         <div class="workarea-wrapper">
@@ -40,7 +48,6 @@
                 <button id="save-gps-walk">Save GPS Walk</button>
             </div>
         
-            <!-- Move the input and save button above the history -->
             <div class="input-container">
                 <label for="podcast-input">Podcast Name: </label>
                 <input type="text" id="podcast-input" placeholder="Enter Podcast Name...">
@@ -57,18 +64,11 @@
             <button id="clear-paths">Clear Walks</button>
         </div>
 
-        
-
-
-
-
-        <!-- 🔥 Login & Register Popups -->
         <div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);"></div>
 
         <div id="authPopup" class="popup-menu">
             <h1 id="authTitle">Login</h1>
             
-            <!-- Login Form -->
             <form id="authForm">
                 <label for="authEmail">Email:</label>
                 <input type="email" id="authEmail" required>
@@ -77,17 +77,19 @@
                 <button type="submit" id="authSubmit">Login</button>
             </form>
 
-            <!-- Sign-Up Link (appears when on Login Form) -->
             <p id="toggleAuth">Don't have an account? <a href="#" id="switchToRegister">Sign up</a></p>
-
-            <!-- Login Link (appears when on Sign-Up Form) -->
             <p id="toggleAuthBack" style="display: none;">Already have an account? <a href="#" id="switchToLogin">Login</a></p>
 
             <button id="guest-button">Guest</button>
         </div>
 
     </div>
-    
+
+    <div id="cookie-popup" class="cookie-popup">
+        <p>We use cookies to improve your experience. By continuing to use this site, you accept our <a href="privacy-policy.html">Privacy Policy</a>.</p>
+        <button id="accept-cookies">Accept</button>
+    </div>
+
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="storageHandler.js" type="module"></script>
     <script src="spotifyfetch.js" type="module"></script>
@@ -116,5 +118,7 @@
             }
         }
     </script>
+
+    <script src="cookies.js"></script>
 </body>
 </html>
