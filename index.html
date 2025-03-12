@@ -20,31 +20,16 @@
         <div class="settings-wrapper">
             <button id="dark-mode-toggle">Toggle Dark Mode</button>
             <button id="logoutButton" style="display: block;">Logout</button>
+            <button id="privacy-policy-button">Privacy Policy</button>
+
+            <script>
+                document.getElementById('privacy-policy-button').addEventListener('click', function() {
+                    window.location.href = 'privacy-policy.html';  // Link to your privacy policy page
+                });
+            </script>
+            
         </div>
 
-    <div id="walk-history">
-        <h3>Walk History</h3>
-        <ul id="history-list">
-            <!-- Walk history will appear here -->
-        </ul>
-    </div>
-
-    <button id="clear-paths">Clear Walks</button>
-    <button id="toggleTracking">Start Tracking</button>
-    <button id="save-gps-walk">Save GPS Walk</button>
-    <button id="logoutButton" style="display: none;">Logout</button>
-    <button id="dark-mode-toggle">Toggle Dark Mode</button>
-    <a href="/privacy-policy.html">Privacy Policy</a>
-
-
-
-
-
-    <!-- 🔥 Login & Register Popups -->
-    <div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);"></div>
-
-    <div id="authPopup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px;">
-        <h3 id="authTitle">Login</h3>
         <div class="workarea-wrapper">
             <button id="undo-btn">
                 <img src="./icons/undo-circular-arrow.png" width="20px" height="20px">
@@ -55,7 +40,6 @@
                 <button id="save-gps-walk">Save GPS Walk</button>
             </div>
         
-            <!-- Move the input and save button above the history -->
             <div class="input-container">
                 <label for="podcast-input">Podcast Name: </label>
                 <input type="text" id="podcast-input" placeholder="Enter Podcast Name...">
@@ -72,21 +56,38 @@
             <button id="clear-paths">Clear Walks</button>
         </div>
 
-        
+        <div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);"></div>
 
+        <div id="authPopup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; border-radius: 10px;">
+            <h3 id="authTitle">Login</h3>
+            
+            <form id="authForm">
+                <label for="authEmail">Email:</label>
+                <input type="email" id="authEmail" required>
+                <label for="authPassword">Password:</label>
+                <input type="password" id="authPassword" required>
+                <button type="submit" id="authSubmit">Login</button>
+            </form>
 
-        <button id="guest-button">Guest</button>
-        
+            <p id="toggleAuth">Don't have an account? <a href="#" id="switchToRegister">Sign up</a></p>
+            <p id="toggleAuthBack" style="display: none;">Already have an account? <a href="#" id="switchToLogin">Login</a></p>
+
+            <button id="guest-button">Guest</button>
+        </div>
+
     </div>
-    
+
+    <div id="cookie-popup" class="cookie-popup">
+        <p>We use cookies to improve your experience. By continuing to use this site, you accept our <a href="privacy-policy.html">Privacy Policy</a>.</p>
+        <button id="accept-cookies">Accept</button>
+    </div>
+
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="storageHandler.js" type="module"></script>
     <script src="spotifyfetch.js" type="module"></script>
     <script src="data.js" type="module"></script>
     <script src="map.js" type="module"></script>
     <script src="script.js" type="module"></script>
-    <script src="cookies.js" type="module"></script>
-
 
     <script>
         if ('serviceWorker' in navigator) {
@@ -110,12 +111,6 @@
         }
     </script>
 
-    <div id="cookie-popup" class="cookie-popup">
-        <p>We use cookies to improve your experience. By continuing to use this site, you accept our <a href="privacy-policy.html">Privacy Policy</a>.</p>
-        <button id="accept-cookies">Accept</button>
-    </div>
-
     <script src="cookies.js"></script>
-
 </body>
 </html>
