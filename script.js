@@ -276,6 +276,53 @@ guestButton.onclick = function () {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+
+    // *******
+    // Resizing Events
+    // *******
+
+    const gridContainer = document.querySelector(".wrapper");
+    const scaler = document.getElementById("scaler");
+
+    let isResizing = false;
+
+    scaler.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        document.body.style.pointerEvents = "none";
+        isResizing = true;
+        document.addEventListener("mousemove", resize);
+        document.addEventListener("mouseup", () => {
+            isResizing = false;
+            ;
+            document.removeEventListener("mousemove", resize);
+            testMap.map.invalidateSize();
+            document.body.style.pointerEvents = "auto";
+            
+        });
+    });
+
+    function resize(e) {
+        if (!isResizing) return;
+
+        let gridRect = gridContainer.getBoundingClientRect();
+        let minHeight = 5;  // Minimum size of resizable section
+        let maxHeight = gridRect.height - 210; // Ensure lower section has space
+        let newHeight = e.clientY - gridRect.top;
+
+        if (newHeight < minHeight) newHeight = minHeight;
+        if (newHeight > maxHeight) newHeight = maxHeight;
+
+        gridContainer.style.gridTemplateRows = `${newHeight}px 5px 1fr`;
+
+        // Force Leaflet to update
+        setTimeout(() => testMap.map.invalidateSize(), 0);
+    }
+
+
+    // *******
+    // Auth Events
+    // *******
+
     const authForm = document.getElementById("authForm");
     const authTitle = document.getElementById("authTitle");
     const switchToRegisterLink = document.getElementById("switchToRegister");

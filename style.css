@@ -25,6 +25,7 @@
     --border-radius: 5px;
     --default-button-color: #fff;
     --default-button-hover-color: #ececec;
+    --marked-scaler-color: rgb(174, 171, 255);
 }
 
 .dark-mode {
@@ -42,6 +43,7 @@
     --place-holder-color: #e0e0e0;
     --default-button-color: #7b7b7b;
     --default-button-hover-color: #626262;
+    --marked-scaler-color: rgb(96, 95, 138);
 }
 
 /* Apply Variables */
@@ -103,11 +105,11 @@ button:hover {
     display: grid;
 
     grid-template-columns: 1fr;
-    grid-template-rows: 45vh 1fr;
+    grid-template-rows: 45vh 5px 1fr;
 }
 
 .workarea-wrapper {
-    grid-row: 2/3;
+    grid-row: 3/4;
     grid-column: 1/2;
 
     overflow: auto;
@@ -179,6 +181,21 @@ button:hover {
 }
 
 
+
+
+
+/************/
+/* Scaler Styling */
+/************/
+
+#scaler {
+    background-color: var(--bg-color);
+    cursor: ns-resize;
+}
+
+#scaler:hover {
+    background-color: var(--marked-scaler-color);
+}
 
 
 
