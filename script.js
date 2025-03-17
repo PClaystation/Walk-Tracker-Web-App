@@ -140,6 +140,38 @@ let gpsPath = []; // Temporary GPS path storage
 let gpsPolyline = null;
 let userMarker; // Store the user's location marker
 
+const fetchWalks = async () => {
+    try {
+        const response = await fetch('/api/location', { 
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch walk data");
+        }
+
+        const walkData = await response.json();
+
+        // Display the walks on the map
+        walkData.forEach(walk => {
+            L.circle([walk.latitude, walk.longitude], {
+                color: 'red',
+                fillColor: '#ff6666',
+                fillOpacity: 0.6,
+                radius: 10
+            }).addTo(testMap.map);
+        });
+
+    } catch (error) {
+        console.error("Error fetching walk data:", error);
+    }
+};
+
+// Call this function when the page loads
+document.addEventListener("DOMContentLoaded", fetchWalks);
+
+
 // Function to create or update the user marker
 const createUserMarker = (latlng) => {
     if (!userMarker) {
