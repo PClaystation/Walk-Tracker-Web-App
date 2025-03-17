@@ -145,17 +145,18 @@ const fetchWalks = async () => {
         const response = await fetch('https://mpmc.ddns.net:5000/api/location', {
             method: 'GET',
             headers: { 
-                'Content-Type': 'application/json' 
-                // Include authorization headers here if needed, e.g.:
-                // 'Authorization': `Bearer ${token}`
-            }
+                'Content-Type': 'application/json',
+                // Optional: Add Authorization header (not needed if you're using cookies)
+                // 'Authorization': `Bearer ${yourToken}`
+            },
+            credentials: 'include'  // Ensure cookies are sent with the request
         });
 
         if (!response.ok) {
             throw new Error("Failed to fetch walk data");
         }
 
-        const walkData = await response.json(); // Parse the returned JSON data
+        const walkData = await response.json();
 
         // Display the walks on the map
         walkData.forEach(walk => {
@@ -171,6 +172,9 @@ const fetchWalks = async () => {
         console.error("Error fetching walk data:", error);
     }
 };
+
+
+
 
 
 // Call this function when the page loads
