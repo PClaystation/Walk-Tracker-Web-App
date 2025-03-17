@@ -142,16 +142,20 @@ let userMarker; // Store the user's location marker
 
 const fetchWalks = async () => {
     try {
-        const response = await fetch('/api/location', { 
+        const response = await fetch('https://mpmc.ddns.net:5000/api/location', {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 
+                'Content-Type': 'application/json' 
+                // Include authorization headers here if needed, e.g.:
+                // 'Authorization': `Bearer ${token}`
+            }
         });
 
         if (!response.ok) {
             throw new Error("Failed to fetch walk data");
         }
 
-        const walkData = await response.json();
+        const walkData = await response.json(); // Parse the returned JSON data
 
         // Display the walks on the map
         walkData.forEach(walk => {
@@ -167,6 +171,7 @@ const fetchWalks = async () => {
         console.error("Error fetching walk data:", error);
     }
 };
+
 
 // Call this function when the page loads
 document.addEventListener("DOMContentLoaded", fetchWalks);
